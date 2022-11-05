@@ -1,2 +1,3 @@
-# auth-ms
+# Authentication microservice (auth-ms)
+
 Authentication microservice
