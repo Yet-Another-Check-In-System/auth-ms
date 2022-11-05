@@ -1,0 +1,74 @@
+name: Pull Request / Dev CI
+
+on:
+    pull_request:
+        branches:
+            - dev
+    push:
+        branches:
+            - dev
+
+env:
+    # User specified
+    # Empty
+
+    # Secrets
+    # Empty
+
+    # Automatic
+    GITHUB_PUSH_BEFORE_SHA: ${{ github.event.before }}
+    GITHUB_PUSH_BASE_SHA: ${{ github.event.base }}
+    GITHUB_PULL_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+    GITHUB_DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+
+jobs:
+    check-style:
+        name: Check code style
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v3
+            - uses: actions/setup-node@main
+              with:
+                  node-version: lts/*
+                  cache: npm
+            - run: npm ci
+            - run: npm run prettier
+
+    lint:
+        name: Lint
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v3
+            - uses: actions/setup-node@main
+              with:
+                  node-version: lts/*
+                  cache: npm
+            - run: npm ci
+            - run: npm run lint
+
+    validate-swagger:
+        name: Validate Swagger/OpenAPI
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v3
+            - uses: actions/setup-node@main
+              with:
+                  node-version: lts/*
+                  cache: npm
+            - run: npx swagger-cli validate ./src/routes/v1/swagger_api_v1.json --yes
+
+    test:
+        name: Test
+        needs: [check-style, backend, validate-swagger]
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v3
+            - uses: actions/setup-node@main
+              with:
+                  node-version: lts/*
+                  cache: npm
+            - run: npm ci
+            - run: npm run test:coverage
