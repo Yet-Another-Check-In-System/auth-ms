@@ -27,7 +27,8 @@ const writeJwt = () => {
         delete user.id;
 
         const token = jwt.sign(user, secret, {
-            audience: 'yac.is',
+            audience: ['yacis:auth', 'yacis:checkin', 'yacis:admin'],
+            issuer: 'yacis:auth',
             subject: id,
             expiresIn: '12h'
         });
