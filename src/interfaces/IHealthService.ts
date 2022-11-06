@@ -1,6 +1,4 @@
-type IHealthService = {
+export interface IHealthService {
     server: boolean;
     database: boolean;
-};
-
-export { IHealthService };
+}

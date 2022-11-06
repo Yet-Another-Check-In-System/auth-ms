@@ -18,7 +18,7 @@ const logger = winston.createLogger({
             level: 'info'
         }),
         new winston.transports.Console({
-            level: 'info'
+            level: 'debug'
         })
     ]
 });

@@ -16,15 +16,7 @@ export const ok = (req: Request, res: Response, data: unknown) => {
 /**
  * 201 Created
  */
-export const created = (
-    req: Request,
-    res: Response,
-    location: string,
-    data: unknown = null
-) => {
-    // Write required location header of the created item
-    res.location(`${req.protocol}://${req.hostname}/api${location}`);
-
+export const created = (req: Request, res: Response, data: unknown = null) => {
     if (!data) {
         return res.status(201).json({
             code: 201,
@@ -52,30 +44,30 @@ export const noContent = (req: Request, res: Response) => {
 /**
  * 400 Bad Request
  */
-export const badRequest = (req: Request, res: Response) => {
+export const badRequest = (req: Request, res: Response, message?: string) => {
     return res.status(400).json({
         code: 400,
-        message: 'Bad Request'
+        message: message ?? 'Bad Request'
     });
 };
 
 /**
  * 401 Unauthorized
  */
-export const unauthorized = (req: Request, res: Response) => {
+export const unauthorized = (req: Request, res: Response, message?: string) => {
     return res.status(401).json({
         code: 401,
-        message: 'Unauthorized'
+        message: message ?? 'Unauthorized'
     });
 };
 
 /**
  * 403 Forbidden
  */
-export const forbidden = (req: Request, res: Response) => {
+export const forbidden = (req: Request, res: Response, message?: string) => {
     return res.status(403).json({
         code: 403,
-        message: 'Forbidden'
+        message: message ?? 'Forbidden'
     });
 };
 
@@ -96,10 +88,14 @@ export const notFound = (req: Request, res: Response) => {
 /**
  * 500 Internal Server Error
  */
-export const internalServerError = (req: Request, res: Response) => {
+export const internalServerError = (
+    req: Request,
+    res: Response,
+    message?: string
+) => {
     return res.status(500).json({
         code: 500,
-        message: 'Internal Server Error'
+        message: message ?? 'Internal Server Error'
     });
 };
 

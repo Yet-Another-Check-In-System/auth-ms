@@ -8,5 +8,6 @@
         "strict": true,
         "resolveJsonModule": true
     },
+    "files": ["./src/types/express/index.d.ts"],
     "exclude": ["**/*.test.ts"]
 }

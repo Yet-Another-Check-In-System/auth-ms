@@ -34,6 +34,9 @@ app.use(errorHandler());
 app.listen(port, () => {
     Logger.info(`Anonymous Voting App API listening on port ${port}`);
 
-    const DB_URL = process.env.DATABASE_URL?.split('@')[1].split('/')[0];
+    const DB = process.env.DATABASE_URL?.split('@')[1];
+    const DB_URL = DB?.split('/')[0];
+    const DB_NAME = DB?.split('/')[1].split('?')[0];
     Logger.info(`Database URL: ${DB_URL}`);
+    Logger.info(`Database: ${DB_NAME}`);
 });
