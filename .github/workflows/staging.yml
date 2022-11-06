@@ -1,7 +1,7 @@
-name: Pull Request CI
+name: Staging CI
 
 on:
-    pull_request:
+    push:
         branches:
             - dev
 
