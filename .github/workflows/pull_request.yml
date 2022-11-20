@@ -58,7 +58,7 @@ jobs:
 
     test:
         name: Test
-        needs: [check-style, backend, validate-swagger]
+        needs: [check-style, lint, validate-swagger]
         runs-on: ubuntu-latest
 
         steps:
@@ -69,3 +69,8 @@ jobs:
                   cache: npm
             - run: npm ci
             - run: npm run test:coverage
+            - uses: codecov/codecov-action@v3
+              with:
+                  token: ${{ env.CODECOV_TOKEN }}
+                  flags: ${{ github.repository }}, pull_request
+                  fail_ci_if_error: true
