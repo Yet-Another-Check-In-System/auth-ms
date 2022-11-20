@@ -16,8 +16,8 @@ model User {
   updatedAt DateTime @updatedAt
 
   fullname      String
-  firstname     String
-  lastname      String
+  firstName     String
+  lastName      String
   email         String
   emailVerified Boolean @default(false)
 
