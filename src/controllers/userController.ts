@@ -1,4 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
+
+import * as IUserService from '../interfaces/IUserService';
 import logger from '../utils/logger';
 import * as responses from '../utils/responses';
 
@@ -16,7 +18,7 @@ export const logInLocalUser = async (
 
         return responses.ok(req, res, { token });
     } catch (err: unknown) {
-        logger.error('Unknown error occured');
+        logger.error(err);
         next(err);
     }
 };
@@ -27,7 +29,7 @@ export const signUpLocalUser = async (
     next: NextFunction
 ) => {
     try {
-        const user = req.User;
+        const user: IUserService.ExportedUser | undefined = req.User;
 
         if (!user) {
             return responses.internalServerError(req, res);
@@ -35,7 +37,7 @@ export const signUpLocalUser = async (
 
         return responses.created(req, res, { email: user.email });
     } catch (err: unknown) {
-        logger.error('Unknown error occured');
+        logger.error(err);
         next(err);
     }
 };
