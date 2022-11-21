@@ -3,6 +3,8 @@ export interface ExportedUser {
     firstName: string;
     lastName: string;
     email: string;
+    country: string;
+    company: string | null;
 }
 
 export interface SignupLocalUser {
@@ -10,4 +12,6 @@ export interface SignupLocalUser {
     lastName: string;
     email: string;
     password: string;
+    country: string;
+    company: string | null;
 }

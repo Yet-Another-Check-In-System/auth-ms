@@ -49,7 +49,9 @@ describe('localLogin', () => {
             id: '7d74863b-1077-449e-b8cd-29a48911adf1',
             firstName: 'Test',
             lastName: 'User',
-            email: 'test@email.com'
+            email: 'test@email.com',
+            country: 'Finland',
+            company: 'TestCompany Oy'
         };
 
         mockedVerifyLocalLogin.mockResolvedValueOnce(user);

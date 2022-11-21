@@ -34,7 +34,9 @@ export const verifyLocalLogin = async (
         id: user.id,
         firstName: user.firstName,
         lastName: user.lastName,
-        email: user.email
+        email: user.email,
+        country: user.country,
+        company: user.company
     };
 
     return exportedUser;
@@ -70,7 +72,9 @@ export const signupLocal = async (
         id: createdUser.id,
         firstName: createdUser.firstName,
         lastName: createdUser.lastName,
-        email: createdUser.email
+        email: createdUser.email,
+        country: createdUser.country,
+        company: createdUser.company
     };
 
     return exportedUser;

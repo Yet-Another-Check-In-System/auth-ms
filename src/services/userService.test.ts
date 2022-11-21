@@ -31,6 +31,8 @@ describe('userService', () => {
                 lastName: 'User',
                 email: 'test@email.com',
                 emailVerified: false,
+                country: 'Finland',
+                company: 'TestCompany Oy',
                 password: null,
                 googleId: '95a6f9e8-1829-49a0-b938-0b3db98f2044',
                 microsoftId: null,
@@ -55,6 +57,8 @@ describe('userService', () => {
                 lastName: 'User',
                 email: 'test@email.com',
                 emailVerified: false,
+                country: 'Finland',
+                company: 'TestCompany Oy',
                 password: bcrypt.hashSync('testPw', 10),
                 googleId: '95a6f9e8-1829-49a0-b938-0b3db98f2044',
                 microsoftId: null,
@@ -79,6 +83,8 @@ describe('userService', () => {
                 lastName: 'User',
                 email: 'test@email.com',
                 emailVerified: false,
+                country: 'Finland',
+                company: 'TestCompany Oy',
                 password: bcrypt.hashSync('testPw', 10),
                 googleId: '95a6f9e8-1829-49a0-b938-0b3db98f2044',
                 microsoftId: null,
@@ -98,7 +104,9 @@ describe('userService', () => {
                 id: user.id,
                 firstName: user.firstName,
                 lastName: user.lastName,
-                email: user.email
+                email: user.email,
+                country: user.country,
+                company: user.company
             });
         });
     });
@@ -113,6 +121,8 @@ describe('userService', () => {
                 lastName: 'User',
                 email: 'test@email.com',
                 emailVerified: false,
+                country: 'Finland',
+                company: 'TestCompany Oy',
                 password: bcrypt.hashSync('testPw', 10),
                 googleId: '95a6f9e8-1829-49a0-b938-0b3db98f2044',
                 microsoftId: null,
@@ -124,7 +134,9 @@ describe('userService', () => {
                     firstName: 'Test',
                     lastName: 'User',
                     email: 'test@email.com',
-                    password: 'testPw'
+                    password: 'testPw',
+                    country: 'Finland',
+                    company: 'TestCompany Oy'
                 },
                 prismaMock
             );
@@ -142,6 +154,8 @@ describe('userService', () => {
                 lastName: 'User',
                 email: 'test@email.com',
                 emailVerified: false,
+                country: 'Finland',
+                company: 'TestCompany Oy',
                 password: bcrypt.hashSync('testPw', 10),
                 googleId: null,
                 microsoftId: null,
@@ -153,7 +167,9 @@ describe('userService', () => {
                     firstName: 'Test',
                     lastName: 'User',
                     email: 'test@email.com',
-                    password: 'testPw'
+                    password: 'testPw',
+                    country: 'Finland',
+                    company: 'TestCompany Oy'
                 },
                 prismaMock
             );
@@ -163,7 +179,9 @@ describe('userService', () => {
                 id: '91179c21-0c48-4abc-aa0c-42b284aaa55b',
                 firstName: 'Test',
                 lastName: 'User',
-                email: 'test@email.com'
+                email: 'test@email.com',
+                country: 'Finland',
+                company: 'TestCompany Oy'
             });
         });
     });
