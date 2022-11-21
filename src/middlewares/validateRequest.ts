@@ -4,15 +4,22 @@ import logger from '../utils/logger';
 import * as responses from '../utils/responses';
 
 const validateRequest = () => {
-    const middleware = (req: Request, res: Response, next: NextFunction) => {
-        const errors = validationResult(req);
+    const middleware = async (
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ) => {
+        try {
+            if (!validationResult(req).isEmpty()) {
+                logger.warn('Request contained invalid values');
+                return responses.badRequest(req, res);
+            }
 
-        if (!errors.isEmpty()) {
-            logger.warn('Request contained invalid values');
-            return responses.badRequest(req, res);
+            next();
+        } catch (err: unknown) {
+            logger.error(err);
+            next(err);
         }
-
-        next();
     };
 
     return middleware;

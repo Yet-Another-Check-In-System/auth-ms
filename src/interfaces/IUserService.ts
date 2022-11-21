@@ -2,7 +2,6 @@ export interface ExportedUser {
     id?: string;
     firstName: string;
     lastName: string;
-    fullname: string;
     email: string;
 }
 

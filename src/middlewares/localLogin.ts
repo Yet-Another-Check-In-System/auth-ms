@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import logger from '../utils/logger';
 import * as userService from '../services/userService';
 import * as responses from '../utils/responses';
+import prisma from '../utils/prismaHandler';
 
 const localLogin = () => {
     const middleware = async (
@@ -14,7 +15,11 @@ const localLogin = () => {
             const password = req.body.password;
 
             // Try to verify user
-            const user = await userService.verifyLocalLogin(email, password);
+            const user = await userService.verifyLocalLogin(
+                email,
+                password,
+                prisma
+            );
 
             if (!user) {
                 return responses.unauthorized(
@@ -28,8 +33,8 @@ const localLogin = () => {
             req.User = user;
 
             next();
-        } catch (err) {
-            logger.error(`Could not login: ${err}`);
+        } catch (err: unknown) {
+            logger.error(err);
             next(err);
         }
     };

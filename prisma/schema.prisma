@@ -15,7 +15,6 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  fullname      String
   firstName     String
   lastName      String
   email         String

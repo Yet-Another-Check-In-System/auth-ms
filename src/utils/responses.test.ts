@@ -8,7 +8,9 @@ import {
     internalServerError,
     notImplemented,
     serviceUnavailable,
-    custom
+    custom,
+    created,
+    ok
 } from './responses';
 
 /* eslint-disable @typescript-eslint/no-explicit-any*/
@@ -25,6 +27,54 @@ const mockResponse: any = () => {
 describe('responses', () => {
     let request: any;
     let response: any;
+
+    test('Should return status 200 - Ok', () => {
+        request = mockRequest();
+        response = mockResponse();
+        ok(request, response, { code: 200, message: 'Ok' });
+
+        expect(response.status).toHaveBeenCalledTimes(1);
+        expect(response.status).toHaveBeenCalledWith(200);
+        expect(response.json).toHaveBeenCalledTimes(1);
+        expect(response.json).toHaveBeenCalledWith({
+            code: 200,
+            message: 'Ok'
+        });
+    });
+
+    test('Should return status 201 - Created', () => {
+        request = mockRequest();
+        response = mockResponse();
+        created(request, response);
+
+        expect(response.status).toHaveBeenCalledTimes(1);
+        expect(response.status).toHaveBeenCalledWith(201);
+        expect(response.json).toHaveBeenCalledTimes(1);
+        expect(response.json).toHaveBeenCalledWith({
+            code: 201,
+            message: 'Created'
+        });
+    });
+
+    test('Should return status 201 - Created - Custom object', () => {
+        request = mockRequest();
+        response = mockResponse();
+
+        const obj = {
+            code: 201,
+            notSameMessage: true
+        };
+
+        created(request, response, obj);
+
+        expect(response.status).toHaveBeenCalledTimes(1);
+        expect(response.status).toHaveBeenCalledWith(201);
+        expect(response.json).toHaveBeenCalledTimes(1);
+        expect(response.json).toHaveBeenCalledWith({
+            code: 201,
+            notSameMessage: true
+        });
+    });
 
     test('Should return status 204 - No Content', () => {
         request = mockRequest();
@@ -54,6 +104,20 @@ describe('responses', () => {
         });
     });
 
+    test('Should return status 400 - Bad Request - Custom', () => {
+        request = mockRequest();
+        response = mockResponse();
+        badRequest(request, response, 'Custom message');
+
+        expect(response.status).toHaveBeenCalledTimes(1);
+        expect(response.status).toHaveBeenCalledWith(400);
+        expect(response.json).toHaveBeenCalledTimes(1);
+        expect(response.json).toHaveBeenCalledWith({
+            code: 400,
+            message: 'Custom message'
+        });
+    });
+
     test('Should return status 401 - Unauthorized', () => {
         request = mockRequest();
         response = mockResponse();
@@ -68,6 +132,20 @@ describe('responses', () => {
         });
     });
 
+    test('Should return status 401 - Unauthorized - Custom', () => {
+        request = mockRequest();
+        response = mockResponse();
+        unauthorized(request, response, 'Custom message');
+
+        expect(response.status).toHaveBeenCalledTimes(1);
+        expect(response.status).toHaveBeenCalledWith(401);
+        expect(response.json).toHaveBeenCalledTimes(1);
+        expect(response.json).toHaveBeenCalledWith({
+            code: 401,
+            message: 'Custom message'
+        });
+    });
+
     test('Should return status 403 - Forbidden', () => {
         request = mockRequest();
         response = mockResponse();
@@ -79,6 +157,20 @@ describe('responses', () => {
         expect(response.json).toHaveBeenCalledWith({
             code: 403,
             message: 'Forbidden'
+        });
+    });
+
+    test('Should return status 403 - Forbidden - Custom', () => {
+        request = mockRequest();
+        response = mockResponse();
+        forbidden(request, response, 'Custom message');
+
+        expect(response.status).toHaveBeenCalledTimes(1);
+        expect(response.status).toHaveBeenCalledWith(403);
+        expect(response.json).toHaveBeenCalledTimes(1);
+        expect(response.json).toHaveBeenCalledWith({
+            code: 403,
+            message: 'Custom message'
         });
     });
 
@@ -107,6 +199,20 @@ describe('responses', () => {
         expect(response.json).toHaveBeenCalledWith({
             code: 500,
             message: 'Internal Server Error'
+        });
+    });
+
+    test('Should return status 500 - Internal Server Error - Custom', () => {
+        request = mockRequest();
+        response = mockResponse();
+        internalServerError(request, response, 'Custom message');
+
+        expect(response.status).toHaveBeenCalledTimes(1);
+        expect(response.status).toHaveBeenCalledWith(500);
+        expect(response.json).toHaveBeenCalledTimes(1);
+        expect(response.json).toHaveBeenCalledWith({
+            code: 500,
+            message: 'Custom message'
         });
     });
 
@@ -149,6 +255,25 @@ describe('responses', () => {
         expect(response.json).toHaveBeenCalledWith({
             code: 999,
             message: 'Custom message'
+        });
+    });
+
+    test('Should return status 999 - Object as custom message', () => {
+        request = mockRequest();
+        response = mockResponse();
+        const obj = {
+            code: 999,
+            notMessage: false
+        };
+
+        custom(request, response, 999, obj);
+
+        expect(response.status).toHaveBeenCalledTimes(1);
+        expect(response.status).toHaveBeenCalledWith(999);
+        expect(response.json).toHaveBeenCalledTimes(1);
+        expect(response.json).toHaveBeenCalledWith({
+            code: 999,
+            notMessage: false
         });
     });
 });

@@ -3,6 +3,7 @@ import logger from '../utils/logger';
 import * as userService from '../services/userService';
 import * as responses from '../utils/responses';
 import { SignupLocalUser } from '../interfaces/IUserService';
+import prisma from '../utils/prismaHandler';
 
 const signupLocal = () => {
     const middleware = async (
@@ -14,7 +15,7 @@ const signupLocal = () => {
             const body: SignupLocalUser = req.body;
 
             // Try to create user
-            const user = await userService.signupLocal(body);
+            const user = await userService.signupLocal(body, prisma);
 
             if (!user) {
                 return responses.badRequest(
@@ -29,7 +30,7 @@ const signupLocal = () => {
 
             next();
         } catch (err) {
-            logger.error(`Could not register: ${err}`);
+            logger.error(err);
             next(err);
         }
     };
