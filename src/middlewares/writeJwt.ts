@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import logger from '../utils/logger';
-import * as responses from '../utils/responses';
 
 const writeJwt = () => {
     const middleware = async (
@@ -9,32 +8,38 @@ const writeJwt = () => {
         res: Response,
         next: NextFunction
     ) => {
-        const user = req.User;
+        try {
+            const user = req.User;
 
-        if (!user) {
-            return responses.internalServerError(req, res);
+            if (!user) {
+                throw new Error('User not set correctly');
+            }
+
+            const secret = process.env.JWT_SECRET;
+            logger.debug(`JWT_SECRET: ${secret}`);
+
+            if (!secret) {
+                throw new Error(
+                    'Could not login due to JWT_SECRET not being set'
+                );
+            }
+
+            const id = user.id;
+            delete user.id;
+
+            const token = jwt.sign(user, secret, {
+                audience: ['yacis:auth', 'yacis:checkin', 'yacis:admin'],
+                issuer: 'yacis:auth',
+                subject: id,
+                expiresIn: '12h'
+            });
+
+            res.Token = token;
+            next();
+        } catch (err: unknown) {
+            logger.error(err);
+            next(err);
         }
-
-        const secret = process.env.JWT_SECRET;
-        logger.debug(`JWT_SECRET: ${secret}`);
-
-        if (!secret) {
-            logger.crit('Could not login due to JWT_SECRET not being set');
-            return next(new Error('Could not login due to an error'));
-        }
-
-        const id = user.id;
-        delete user.id;
-
-        const token = jwt.sign(user, secret, {
-            audience: ['yacis:auth', 'yacis:checkin', 'yacis:admin'],
-            issuer: 'yacis:auth',
-            subject: id,
-            expiresIn: '12h'
-        });
-
-        res.Token = token;
-        next();
     };
 
     return middleware;

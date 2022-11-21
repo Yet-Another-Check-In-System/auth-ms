@@ -30,7 +30,7 @@ const signupLocal = () => {
 
             next();
         } catch (err) {
-            logger.error(`Could not register: ${err}`);
+            logger.error(err);
             next(err);
         }
     };

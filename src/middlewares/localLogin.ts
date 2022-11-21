@@ -33,8 +33,8 @@ const localLogin = () => {
             req.User = user;
 
             next();
-        } catch (err) {
-            logger.error(`Could not login: ${err}`);
+        } catch (err: unknown) {
+            logger.error(err);
             next(err);
         }
     };
