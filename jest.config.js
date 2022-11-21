@@ -2,6 +2,6 @@
 module.exports = {
     preset: 'ts-jest',
     testEnvironment: 'node',
-    testPathIgnorePatterns: ['/node_modules/', '/build/', '/swagger/'],
+    testPathIgnorePatterns: ['/node_modules/', '/build/', '/docs/'],
     collectCoverageFrom: ['src/**/*.ts']
 };
