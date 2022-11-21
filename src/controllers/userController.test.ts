@@ -111,7 +111,6 @@ describe('userController', () => {
                 id: 'fa16b447-0544-4e3f-a5dd-8d2241c3a352',
                 firstName: 'Test',
                 lastName: 'User',
-                fullname: 'Test User',
                 email: 'test@email.com'
             };
 
@@ -139,7 +138,6 @@ describe('userController', () => {
                 id: 'fa16b447-0544-4e3f-a5dd-8d2241c3a352',
                 firstName: 'Test',
                 lastName: 'User',
-                fullname: 'Test User',
                 email: 'test@email.com'
             };
 

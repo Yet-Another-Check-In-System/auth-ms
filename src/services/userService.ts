@@ -33,7 +33,6 @@ export const verifyLocalLogin = async (
         id: user.id,
         firstName: user.firstName,
         lastName: user.lastName,
-        fullname: user.fullname,
         email: user.email
     };
 
@@ -61,7 +60,6 @@ export const signupLocal = async (
     const exportedUser: ExportedUser = await prisma.user.create({
         data: {
             ...data,
-            fullname: `${data.firstName} ${data.lastName}`,
             password: await bcrypt.hash(data.password, 10)
         }
     });
