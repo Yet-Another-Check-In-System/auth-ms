@@ -16,24 +16,24 @@ router.post('/', responses.notImplemented);
 /**
  * Get specific group
  */
-router.get('/:userGroupId', responses.notImplemented);
+router.get('/:groupId', responses.notImplemented);
 
 /**
  * Update specific group
  */
-router.put('/:userGroupId', responses.notImplemented);
+router.patch('/:groupId', responses.notImplemented);
 
 /**
  * Delete specific group
  */
-router.delete('/:userGroupId', responses.notImplemented);
+router.delete('/:groupId', responses.notImplemented);
 
 /**
- * Get users of specific group
+ * Add users to specific group
  */
-router.get('/:userGroupId/users', responses.notImplemented);
+router.patch('/:groupId/users', responses.notImplemented);
 
 /**
- * Add user to specific group
+ * Remove user from specific group
  */
-router.patch('/:userGroupId/users', responses.notImplemented);
+router.delete('/:groupId/users/:userId', responses.notImplemented);

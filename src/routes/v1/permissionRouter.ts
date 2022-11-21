@@ -8,30 +8,25 @@ import * as responses from '../../utils/responses';
 export const router = Router();
 
 /**
- * Get all permissions for calling user
- */
-router.get('/user', responses.notImplemented);
-
-/**
  * Get all permissions for user
- * Requires admin authentication
+ * Requires admin authentication for other users
  */
 router.get('/user/:userId', responses.notImplemented);
 
 /**
- * Add permissions for user
+ * Update permissions for user
  * Requires admin authentication
  */
-router.post('/user/:userId', responses.notImplemented);
+router.put('/user/:userId', responses.notImplemented);
 
 /**
  * Get all permissions for user group
- * Requires admin authentication
+ * Requires admin authentication for other users
  */
-router.get('/group/:userGroupId', responses.notImplemented);
+router.get('/group/:groupId', responses.notImplemented);
 
 /**
- * Add permissions for user group
+ * Update permissions for user group
  * Requires admin authentication
  */
-router.post('/group/:userGroupId', responses.notImplemented);
+router.put('/group/:groupId', responses.notImplemented);
