@@ -44,21 +44,9 @@ jobs:
             - run: npm ci
             - run: npm run lint
 
-    validate-swagger:
-        name: Validate Swagger/OpenAPI
-        runs-on: ubuntu-latest
-
-        steps:
-            - uses: actions/checkout@v3
-            - uses: actions/setup-node@main
-              with:
-                  node-version: lts/*
-                  cache: npm
-            - run: npx swagger-cli validate ./src/routes/v1/swagger_api_v1.json --yes
-
     test:
         name: Test
-        needs: [check-style, lint, validate-swagger]
+        needs: [check-style, lint]
         runs-on: ubuntu-latest
 
         steps:

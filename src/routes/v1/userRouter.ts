@@ -23,6 +23,11 @@ router.post(
 );
 
 /**
+ * Login with Apple
+ */
+router.post('/login/apple', responses.notImplemented);
+
+/**
  * Login with Google
  */
 router.post('/login/google', responses.notImplemented);
@@ -41,6 +46,8 @@ router.post(
     body('password').isLength({ min: 8 }),
     body('firstname').not().isEmpty(),
     body('lastname').not().isEmpty(),
+    body('country').not().isEmpty(),
+    body('company').not().isEmpty(),
     validateRequest(),
     signupLocal(),
     userController.signUpLocalUser

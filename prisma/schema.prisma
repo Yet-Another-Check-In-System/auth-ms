@@ -19,6 +19,8 @@ model User {
   lastName      String
   email         String
   emailVerified Boolean @default(false)
+  country       String
+  company       String?
 
   password    String?
   googleId    String?

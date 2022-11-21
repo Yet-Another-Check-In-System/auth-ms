@@ -52,7 +52,9 @@ describe('signupLocal', () => {
             id: '944f2098-50f2-4e90-8ae5-50be2b2a8ab0',
             firstName: 'Test',
             lastName: 'User',
-            email: 'test@email.com'
+            email: 'test@email.com',
+            country: 'Finland',
+            company: 'TestCompany Oy'
         };
 
         mockedSignupLocal.mockResolvedValueOnce(user);

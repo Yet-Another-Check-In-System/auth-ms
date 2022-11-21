@@ -22,7 +22,9 @@ describe('writeJwt', () => {
                 id: 'dc6f2321-7096-4dd5-bf63-e6647dcc3426',
                 firstName: 'Test',
                 lastName: 'User',
-                email: 'test@email.com'
+                email: 'test@email.com',
+                country: 'Finland',
+                company: 'TestCompany Oy'
             }
         };
 
