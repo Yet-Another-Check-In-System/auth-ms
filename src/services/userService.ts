@@ -1,11 +1,12 @@
 import bcrypt from 'bcryptjs';
-import prisma from '../utils/prismaHandler';
 import logger from '../utils/logger';
 import { ExportedUser, SignupLocalUser } from '../interfaces/IUserService';
+import { PrismaClient } from '@prisma/client';
 
 export const verifyLocalLogin = async (
     email: string,
-    password: string
+    password: string,
+    prisma: PrismaClient
 ): Promise<ExportedUser | null> => {
     logger.debug('Verifying login information');
 
@@ -40,7 +41,8 @@ export const verifyLocalLogin = async (
 };
 
 export const signupLocal = async (
-    data: SignupLocalUser
+    data: SignupLocalUser,
+    prisma: PrismaClient
 ): Promise<ExportedUser | null> => {
     const user = await prisma.user.findFirst({
         where: {
@@ -57,12 +59,19 @@ export const signupLocal = async (
     }
 
     // Insert new user to database
-    const exportedUser: ExportedUser = await prisma.user.create({
+    const createdUser = await prisma.user.create({
         data: {
             ...data,
             password: await bcrypt.hash(data.password, 10)
         }
     });
+
+    const exportedUser: ExportedUser = {
+        id: createdUser.id,
+        firstName: createdUser.firstName,
+        lastName: createdUser.lastName,
+        email: createdUser.email
+    };
 
     return exportedUser;
 };
