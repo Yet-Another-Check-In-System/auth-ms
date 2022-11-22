@@ -9,7 +9,7 @@ export const router = Router();
 /**
  * Get all user groups
  */
-router.get('/', responses.notImplemented);
+router.get('/', groupController.getGroups);
 
 /**
  * Create a new user group
@@ -28,7 +28,7 @@ router.get(
     '/:groupId',
     query('groupId').not().isEmpty().isUUID().trim().escape(),
     validateRequest(),
-    responses.notImplemented
+    groupController.getGroup
 );
 
 /**

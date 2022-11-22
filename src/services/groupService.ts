@@ -20,6 +20,14 @@ export const createGroup = async (name: string, prisma: PrismaClient) => {
     return newGroupData;
 };
 
+export const getGroups = async (prisma: PrismaClient) => {
+    logger.debug('Getting all groups');
+
+    const group = await prisma.group.findMany({});
+
+    return group;
+};
+
 export const getGroup = async (groupId: string, prisma: PrismaClient) => {
     logger.debug(`Getting group with ID: ${groupId}`);
 

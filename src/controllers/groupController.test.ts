@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import * as groupService from '../services/groupService';
 import * as responses from '../utils/responses';
-import { createNewGroup, getGroup } from './groupController';
+import { createNewGroup, getGroups, getGroup } from './groupController';
 
 jest.mock('../services/groupService');
 jest.mock('../utils/logger');
@@ -66,6 +66,79 @@ describe('groupController', () => {
         });
     });
 
+    describe('getGroups', () => {
+        it('Should call ok with received data', async () => {
+            const groups = [
+                {
+                    id: '302712a3-9481-4b11-8477-d7832cc7d525',
+                    createdAt: new Date(),
+                    updatedAt: new Date(),
+                    name: 'testName 1'
+                },
+                {
+                    id: '064f626c-4ba1-4139-b0da-e4d4e5d38df1',
+                    createdAt: new Date(),
+                    updatedAt: new Date(),
+                    name: 'testName 2'
+                }
+            ];
+
+            mockedGroupService.getGroups.mockResolvedValueOnce(groups);
+
+            await getGroups(
+                mockRequest as Request,
+                mockResponse as Response,
+                mockNext
+            );
+
+            expect(mockedResponses.ok).toBeCalledTimes(1);
+            expect(mockedResponses.ok).toBeCalledWith(
+                mockRequest,
+                mockResponse,
+                {
+                    groups: groups
+                }
+            );
+            expect(mockNext).not.toBeCalled();
+        });
+
+        it('Should handle no results', async () => {
+            mockedGroupService.getGroups.mockResolvedValueOnce([]);
+
+            await getGroups(
+                mockRequest as Request,
+                mockResponse as Response,
+                mockNext
+            );
+
+            expect(mockedResponses.ok).toBeCalledTimes(1);
+            expect(mockedResponses.ok).toBeCalledWith(
+                mockRequest,
+                mockResponse,
+                {
+                    groups: []
+                }
+            );
+            expect(mockNext).not.toBeCalled();
+        });
+
+        it('Should handle errors being thrown', async () => {
+            mockedGroupService.getGroups.mockImplementationOnce(() => {
+                throw new Error('test error');
+            });
+
+            await getGroups(
+                mockRequest as Request,
+                mockResponse as Response,
+                mockNext
+            );
+
+            expect(mockedResponses.ok).not.toBeCalled();
+            expect(mockNext).toBeCalledTimes(1);
+            expect(mockNext).toBeCalledWith(new Error('test error'));
+        });
+    });
+
     describe('getGroup', () => {
         beforeEach(() => {
             mockRequest = {
@@ -100,7 +173,7 @@ describe('groupController', () => {
             expect(mockNext).not.toBeCalled();
         });
 
-        it('Should call ok with received data', async () => {
+        it('Should call not found if no reports are found', async () => {
             mockedGroupService.getGroup.mockResolvedValueOnce(null);
 
             await getGroup(

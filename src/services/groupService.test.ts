@@ -1,5 +1,5 @@
 import { prismaMock } from '../utils/prismaMock';
-import { createGroup, getGroup } from './groupService';
+import { createGroup, getGroup, getGroups } from './groupService';
 
 jest.mock('../utils/logger');
 
@@ -34,6 +34,49 @@ describe('groupService', () => {
             await expect(createGroup('testName', prismaMock)).rejects.toThrow(
                 'test error'
             );
+        });
+    });
+
+    describe('getGroups', () => {
+        it('Should find all the groups', async () => {
+            const groups = [
+                {
+                    id: 'f2a93269-f534-45fb-afb8-66a416728a01',
+                    createdAt: new Date(),
+                    updatedAt: new Date(),
+                    name: 'testName 1'
+                },
+                {
+                    id: '7d47ad93-a66b-4090-9995-43ece8987eb9',
+                    createdAt: new Date(),
+                    updatedAt: new Date(),
+                    name: 'testName 2'
+                }
+            ];
+
+            prismaMock.group.findMany.mockResolvedValueOnce(groups);
+
+            const res = await getGroups(prismaMock);
+
+            expect(prismaMock.group.findMany).toBeCalledTimes(1);
+            expect(res).toEqual(groups);
+        });
+
+        it('Should return empty array if no groups was found', async () => {
+            prismaMock.group.findMany.mockResolvedValueOnce([]);
+
+            const res = await getGroups(prismaMock);
+
+            expect(prismaMock.group.findMany).toBeCalledTimes(1);
+            expect(res).toEqual([]);
+        });
+
+        it('Should not handle any thrown errors internally', async () => {
+            prismaMock.group.findMany.mockImplementationOnce(() => {
+                throw new Error('test error');
+            });
+
+            await expect(getGroups(prismaMock)).rejects.toThrow('test error');
         });
     });
 

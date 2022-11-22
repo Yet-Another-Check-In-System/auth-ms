@@ -22,6 +22,25 @@ export const createNewGroup = async (
     }
 };
 
+export const getGroups = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    try {
+        const foundGroups = await groupService.getGroups(prisma);
+
+        const response = {
+            groups: foundGroups
+        };
+
+        return responses.ok(req, res, response);
+    } catch (err: unknown) {
+        logger.error(err);
+        next(err);
+    }
+};
+
 export const getGroup = async (
     req: Request,
     res: Response,
