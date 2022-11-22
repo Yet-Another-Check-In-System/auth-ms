@@ -1,7 +1,9 @@
-import bcrypt from 'bcryptjs';
-import logger from '../utils/logger';
-import { ExportedUser, SignupLocalUser } from '../interfaces/IUserService';
 import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcryptjs';
+import { DateTime } from 'luxon';
+
+import { ExportedUser, SignupLocalUser } from '../interfaces/IUserService';
+import logger from '../utils/logger';
 
 export const verifyLocalLogin = async (
     email: string,
@@ -29,6 +31,18 @@ export const verifyLocalLogin = async (
         logger.warn('Incorrect email or password.');
         return null;
     }
+
+    // Update user expiry
+    const expiryDate = DateTime.utc().plus({ years: 1 });
+
+    await prisma.user.update({
+        where: {
+            id: user.id
+        },
+        data: {
+            expireAt: expiryDate.toJSDate()
+        }
+    });
 
     const exportedUser: ExportedUser = {
         id: user.id,
@@ -60,11 +74,14 @@ export const signupLocal = async (
         return null;
     }
 
+    const expiryDate = DateTime.utc().plus({ years: 1 });
+
     // Insert new user to database
     const createdUser = await prisma.user.create({
         data: {
             ...data,
-            password: await bcrypt.hash(data.password, 10)
+            password: await bcrypt.hash(data.password, 10),
+            expireAt: expiryDate.toJSDate()
         }
     });
 
