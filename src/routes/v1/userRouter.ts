@@ -1,11 +1,12 @@
 import { Router } from 'express';
-import loginLocal from '../../middlewares/localLogin';
-import writeJwt from '../../middlewares/writeJwt';
 import { body } from 'express-validator';
-import validateRequest from '../../middlewares/validateRequest';
+
 import * as userController from '../../controllers/userController';
-import * as responses from '../../utils/responses';
+import loginLocal from '../../middlewares/localLogin';
 import signupLocal from '../../middlewares/signupLocal';
+import validateRequest from '../../middlewares/validateRequest';
+import writeJwt from '../../middlewares/writeJwt';
+import * as responses from '../../utils/responses';
 
 export const router = Router();
 
