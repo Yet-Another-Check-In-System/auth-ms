@@ -1,13 +1,13 @@
 import { NextFunction, Request, Response } from 'express';
-import { createGroup } from '../services/groupService';
+import * as groupService from '../services/groupService';
 import * as responses from '../utils/responses';
-import { createNewGroup } from './groupController';
+import { createNewGroup, getGroup } from './groupController';
 
 jest.mock('../services/groupService');
 jest.mock('../utils/logger');
 jest.mock('../utils/responses');
 
-const mockedCreateGroup = jest.mocked(createGroup);
+const mockedGroupService = jest.mocked(groupService);
 const mockedResponses = jest.mocked(responses);
 
 describe('groupController', () => {
@@ -17,17 +17,19 @@ describe('groupController', () => {
 
     beforeEach(() => {
         jest.resetAllMocks();
-
-        mockRequest = {
-            body: {
-                name: 'testName'
-            }
-        };
     });
 
     describe('createNewGroup', () => {
+        beforeEach(() => {
+            mockRequest = {
+                body: {
+                    name: 'testName'
+                }
+            };
+        });
+
         it('Should call created with received data', async () => {
-            mockedCreateGroup.mockResolvedValueOnce({
+            mockedGroupService.createGroup.mockResolvedValueOnce({
                 name: 'testName',
                 users: []
             });
@@ -48,7 +50,7 @@ describe('groupController', () => {
         });
 
         it('Should handle errors being thrown', async () => {
-            mockedCreateGroup.mockImplementationOnce(() => {
+            mockedGroupService.createGroup.mockImplementationOnce(() => {
                 throw new Error('test error');
             });
 
@@ -59,6 +61,75 @@ describe('groupController', () => {
             );
 
             expect(mockedResponses.created).not.toBeCalled();
+            expect(mockNext).toBeCalledTimes(1);
+            expect(mockNext).toBeCalledWith(new Error('test error'));
+        });
+    });
+
+    describe('getGroup', () => {
+        beforeEach(() => {
+            mockRequest = {
+                query: {
+                    groupId: '34c48a24-311e-412b-9716-e71f177ee6c4'
+                }
+            };
+        });
+
+        it('Should call ok with received data', async () => {
+            const group = {
+                id: '302712a3-9481-4b11-8477-d7832cc7d525',
+                createdAt: new Date(),
+                updatedAt: new Date(),
+                name: 'testName'
+            };
+
+            mockedGroupService.getGroup.mockResolvedValueOnce(group);
+
+            await getGroup(
+                mockRequest as Request,
+                mockResponse as Response,
+                mockNext
+            );
+
+            expect(mockedResponses.ok).toBeCalledTimes(1);
+            expect(mockedResponses.ok).toBeCalledWith(
+                mockRequest,
+                mockResponse,
+                group
+            );
+            expect(mockNext).not.toBeCalled();
+        });
+
+        it('Should call ok with received data', async () => {
+            mockedGroupService.getGroup.mockResolvedValueOnce(null);
+
+            await getGroup(
+                mockRequest as Request,
+                mockResponse as Response,
+                mockNext
+            );
+
+            expect(mockedResponses.notFound).toBeCalledTimes(1);
+            expect(mockedResponses.notFound).toBeCalledWith(
+                mockRequest,
+                mockResponse
+            );
+            expect(mockedResponses.ok).not.toBeCalled();
+            expect(mockNext).not.toBeCalled();
+        });
+
+        it('Should handle errors being thrown', async () => {
+            mockedGroupService.getGroup.mockImplementationOnce(() => {
+                throw new Error('test error');
+            });
+
+            await getGroup(
+                mockRequest as Request,
+                mockResponse as Response,
+                mockNext
+            );
+
+            expect(mockedResponses.ok).not.toBeCalled();
             expect(mockNext).toBeCalledTimes(1);
             expect(mockNext).toBeCalledWith(new Error('test error'));
         });

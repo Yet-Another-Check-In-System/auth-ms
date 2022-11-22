@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import * as responses from '../../utils/responses';
 import validateRequest from '../../middlewares/validateRequest';
-import { body } from 'express-validator';
+import { body, query } from 'express-validator';
 import * as groupController from '../../controllers/groupController';
 
 export const router = Router();
@@ -24,13 +24,19 @@ router.post(
 /**
  * Get specific group
  */
-router.get('/:groupId', responses.notImplemented);
+router.get(
+    '/:groupId',
+    query('groupId').not().isEmpty().isUUID().trim().escape(),
+    validateRequest(),
+    responses.notImplemented
+);
 
 /**
  * Update specific group
  */
 router.patch(
     '/:groupId',
+    query('groupId').not().isEmpty().isUUID().trim().escape(),
     body('name').not().isEmpty().trim().escape(),
     validateRequest(),
     responses.notImplemented
@@ -39,13 +45,19 @@ router.patch(
 /**
  * Delete specific group
  */
-router.delete('/:groupId', responses.notImplemented);
+router.delete(
+    '/:groupId',
+    query('groupId').not().isEmpty().isUUID().trim().escape(),
+    validateRequest(),
+    responses.notImplemented
+);
 
 /**
  * Add users to specific group
  */
 router.patch(
     '/:groupId/users',
+    query('groupId').not().isEmpty().isUUID().trim().escape(),
     body().isArray(),
     validateRequest(),
     responses.notImplemented
@@ -54,4 +66,10 @@ router.patch(
 /**
  * Remove user from specific group
  */
-router.delete('/:groupId/users/:userId', responses.notImplemented);
+router.delete(
+    '/:groupId/users/:userId',
+    query('groupId').not().isEmpty().isUUID().trim().escape(),
+    query('userId').not().isEmpty().isUUID().trim().escape(),
+    validateRequest(),
+    responses.notImplemented
+);

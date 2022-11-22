@@ -19,3 +19,15 @@ export const createGroup = async (name: string, prisma: PrismaClient) => {
 
     return newGroupData;
 };
+
+export const getGroup = async (groupId: string, prisma: PrismaClient) => {
+    logger.debug(`Getting group with ID: ${groupId}`);
+
+    const group = await prisma.group.findFirst({
+        where: {
+            id: groupId
+        }
+    });
+
+    return group;
+};
