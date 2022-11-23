@@ -59,6 +59,7 @@ router.patch(
     '/:groupId/users',
     query('groupId').not().isEmpty().isUUID().trim().escape(),
     body().isArray(),
+    body('*').isUUID(),
     validateRequest(),
     responses.notImplemented
 );
