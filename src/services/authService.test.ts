@@ -1,11 +1,11 @@
 import bcrypt from 'bcryptjs';
 
 import { prismaMock } from '../utils/prismaMock';
-import { signupLocal, verifyLocalLogin } from './userService';
+import { signupLocal, verifyLocalLogin } from './authService';
 
 jest.mock('../utils/logger');
 
-describe('userService', () => {
+describe('authService', () => {
     beforeEach(() => {
         jest.resetAllMocks();
     });

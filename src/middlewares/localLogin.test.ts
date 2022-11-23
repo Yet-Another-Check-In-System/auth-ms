@@ -1,10 +1,10 @@
 import { Request, Response, NextFunction } from 'express';
 import localLogin from './localLogin';
 import * as responses from '../utils/responses';
-import { verifyLocalLogin } from '../services/userService';
+import { verifyLocalLogin } from '../services/authService';
 
 jest.mock('../utils/logger');
-jest.mock('../services/userService');
+jest.mock('../services/authService');
 jest.mock('../utils/responses');
 
 const mockedResponses = jest.mocked(responses);

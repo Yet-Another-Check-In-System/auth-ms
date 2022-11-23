@@ -1,15 +1,15 @@
 import { NextFunction, Request, Response } from 'express';
 
 import * as responses from '../utils/responses';
-import { logInLocalUser, signUpLocalUser } from './userController';
-import { ExportedUser } from '../interfaces/IUserService';
+import { logInLocalUser, signUpLocalUser } from './authController';
+import { ExportedUser } from '../interfaces/IAuthService';
 
 jest.mock('../utils/logger');
 jest.mock('../utils/responses');
 
 const mockedResponses = jest.mocked(responses);
 
-describe('userController', () => {
+describe('authController', () => {
     let mockRequest: Partial<Request>;
     let mockResponse: Partial<Response>;
     const mockNext: NextFunction = jest.fn();

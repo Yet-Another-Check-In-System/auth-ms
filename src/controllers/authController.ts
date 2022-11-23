@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 
-import * as IUserService from '../interfaces/IUserService';
+import * as IUserService from '../interfaces/IAuthService';
 import logger from '../utils/logger';
 import * as responses from '../utils/responses';
 

@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { body } from 'express-validator';
 
-import * as userController from '../../controllers/userController';
+import * as userController from '../../controllers/authController';
 import loginLocal from '../../middlewares/localLogin';
 import signupLocal from '../../middlewares/signupLocal';
 import validateRequest from '../../middlewares/validateRequest';
