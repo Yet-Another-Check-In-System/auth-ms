@@ -1,3 +1,5 @@
+import { Group } from '@prisma/client';
+
 import { prismaMock } from '../utils/prismaMock';
 import {
     addUsersToGroup,
@@ -17,7 +19,7 @@ describe('groupService', () => {
     });
 
     describe('createGroup', () => {
-        it('Should create a new group using Prisma', async () => {
+        it('Should create a new group', async () => {
             prismaMock.group.create.mockResolvedValueOnce({
                 id: 'ee9b3e7d-9303-4371-bada-c4a5dbd91952',
                 createdAt: new Date(),
@@ -29,6 +31,7 @@ describe('groupService', () => {
 
             expect(prismaMock.group.create).toBeCalledTimes(1);
             expect(res).toEqual({
+                id: 'ee9b3e7d-9303-4371-bada-c4a5dbd91952',
                 name: 'testName',
                 users: []
             });
@@ -67,7 +70,16 @@ describe('groupService', () => {
             const res = await getGroups(prismaMock);
 
             expect(prismaMock.group.findMany).toBeCalledTimes(1);
-            expect(res).toEqual(groups);
+            expect(res).toEqual([
+                {
+                    id: 'f2a93269-f534-45fb-afb8-66a416728a01',
+                    name: 'testName 1'
+                },
+                {
+                    id: '7d47ad93-a66b-4090-9995-43ece8987eb9',
+                    name: 'testName 2'
+                }
+            ]);
         });
 
         it('Should return empty array if no groups was found', async () => {
@@ -89,12 +101,20 @@ describe('groupService', () => {
     });
 
     describe('getGroup', () => {
-        it('Should find the group using Prisma', async () => {
-            const group = {
+        it('Should find the group', async () => {
+            const group: Group & { UsersInGroups: { userId: string }[] } = {
                 id: 'f2a93269-f534-45fb-afb8-66a416728a01',
                 createdAt: new Date(),
                 updatedAt: new Date(),
-                name: 'testName'
+                name: 'testName',
+                UsersInGroups: [
+                    {
+                        userId: '229fbdd5-f448-4744-b081-adaedbd2c626'
+                    },
+                    {
+                        userId: 'fd2f6344-89c9-4275-abc6-bb799b313542'
+                    }
+                ]
             };
 
             prismaMock.group.findFirst.mockResolvedValueOnce(group);
@@ -105,7 +125,38 @@ describe('groupService', () => {
             );
 
             expect(prismaMock.group.findFirst).toBeCalledTimes(1);
-            expect(res).toEqual(group);
+            expect(res).toEqual({
+                id: group.id,
+                name: group.name,
+                users: [
+                    '229fbdd5-f448-4744-b081-adaedbd2c626',
+                    'fd2f6344-89c9-4275-abc6-bb799b313542'
+                ]
+            });
+        });
+
+        it('Should return empty user array if no users', async () => {
+            const group: Group & { UsersInGroups: { userId: string }[] } = {
+                id: 'f2a93269-f534-45fb-afb8-66a416728a01',
+                createdAt: new Date(),
+                updatedAt: new Date(),
+                name: 'testName',
+                UsersInGroups: []
+            };
+
+            prismaMock.group.findFirst.mockResolvedValueOnce(group);
+
+            const res = await getGroup(
+                'f2a93269-f534-45fb-afb8-66a416728a01',
+                prismaMock
+            );
+
+            expect(prismaMock.group.findFirst).toBeCalledTimes(1);
+            expect(res).toEqual({
+                id: group.id,
+                name: group.name,
+                users: []
+            });
         });
 
         it('Should return null if the group was not found', async () => {
@@ -170,7 +221,10 @@ describe('groupService', () => {
                 prismaMock
             );
 
-            expect(res).toEqual(group);
+            expect(res).toEqual({
+                id: group.id,
+                name: group.name
+            });
             expect(prismaMock.group.findFirst).toBeCalledTimes(1);
             expect(prismaMock.group.update).toBeCalledTimes(1);
         });
@@ -205,7 +259,7 @@ describe('groupService', () => {
             expect(prismaMock.group.delete).not.toBeCalled();
         });
 
-        it('Should return null if group has members', async () => {
+        it('Should return false if group has members', async () => {
             prismaMock.group.findFirst.mockResolvedValueOnce({
                 id: 'b4e730e3-e037-4c41-881a-6af859e5d8ea',
                 createdAt: new Date(),
@@ -232,7 +286,7 @@ describe('groupService', () => {
                 prismaMock
             );
 
-            expect(res).toBeNull();
+            expect(res).toEqual(false);
             expect(prismaMock.group.findFirst).toBeCalledTimes(1);
             expect(prismaMock.usersInGroups.findMany).toBeCalledTimes(1);
             expect(prismaMock.group.delete).not.toBeCalled();
@@ -285,7 +339,7 @@ describe('groupService', () => {
             expect(prismaMock.usersInGroups.createMany).not.toBeCalled();
         });
 
-        it('Should return null if any user not found', async () => {
+        it('Should return false if any user not found', async () => {
             prismaMock.group.findFirst.mockResolvedValueOnce({
                 id: 'b4e730e3-e037-4c41-881a-6af859e5d8ea',
                 createdAt: new Date(),
@@ -300,22 +354,23 @@ describe('groupService', () => {
                 prismaMock
             );
 
-            expect(res).toBeNull();
+            expect(res).toEqual(false);
             expect(prismaMock.group.findFirst).toBeCalledTimes(1);
             expect(prismaMock.user.findMany).toBeCalledTimes(1);
             expect(prismaMock.usersInGroups.createMany).not.toBeCalled();
         });
 
-        it('Should return true', async () => {
-            prismaMock.group.findFirst.mockResolvedValueOnce({
+        it('Should return group with user ids', async () => {
+            const group = {
                 id: 'b4e730e3-e037-4c41-881a-6af859e5d8ea',
                 createdAt: new Date(),
                 updatedAt: new Date(),
                 name: 'Group 1'
-            });
-            prismaMock.user.findMany.mockResolvedValueOnce([
+            };
+
+            const users = [
                 {
-                    id: '9a609741-2a9d-4b79-90bb-1f387d7e6871',
+                    id: 'a85c6091-b83d-49e0-becf-561621519360',
                     createdAt: new Date(),
                     updatedAt: new Date(),
                     expireAt: new Date(),
@@ -330,7 +385,10 @@ describe('groupService', () => {
                     googleId: null,
                     microsoftId: null
                 }
-            ]);
+            ];
+
+            prismaMock.group.findFirst.mockResolvedValueOnce(group);
+            prismaMock.user.findMany.mockResolvedValueOnce(users);
 
             const res = await addUsersToGroup(
                 'b4e730e3-e037-4c41-881a-6af859e5d8ea',
@@ -338,7 +396,11 @@ describe('groupService', () => {
                 prismaMock
             );
 
-            expect(res).toBeTruthy();
+            expect(res).toEqual({
+                id: group.id,
+                name: group.name,
+                users: [users[0].id]
+            });
             expect(prismaMock.group.findFirst).toBeCalledTimes(1);
             expect(prismaMock.user.findMany).toBeCalledTimes(1);
             expect(prismaMock.usersInGroups.createMany).toBeCalledTimes(1);

@@ -1,9 +1,15 @@
 import { PrismaClient } from '@prisma/client';
 import _ from 'lodash';
 
-import { UserGroupService } from '../interfaces/IGroupService';
+import * as IGroupService from '../interfaces/IGroupService';
 import logger from '../utils/logger';
 
+/**
+ * Create new group
+ * @param name
+ * @param prisma
+ * @returns
+ */
 export const createGroup = async (name: string, prisma: PrismaClient) => {
     logger.debug('Creating new user group');
 
@@ -13,7 +19,8 @@ export const createGroup = async (name: string, prisma: PrismaClient) => {
         }
     });
 
-    const newGroupData: UserGroupService = {
+    const newGroupData: IGroupService.singleGroup = {
+        id: group.id,
         name: group.name,
         users: []
     };
@@ -21,26 +28,70 @@ export const createGroup = async (name: string, prisma: PrismaClient) => {
     return newGroupData;
 };
 
-export const getGroups = async (prisma: PrismaClient) => {
-    logger.debug('Getting all groups');
-
-    const group = await prisma.group.findMany({});
-
-    return group;
-};
-
+/**
+ * Get single group
+ * @param groupId
+ * @param prisma
+ * @returns
+ */
 export const getGroup = async (groupId: string, prisma: PrismaClient) => {
     logger.debug(`Getting group with ID: ${groupId}`);
 
     const group = await prisma.group.findFirst({
         where: {
             id: groupId
+        },
+        include: {
+            UsersInGroups: {
+                select: {
+                    userId: true
+                },
+                where: {
+                    groupId: groupId
+                }
+            }
         }
     });
 
-    return group;
+    if (!group) {
+        // Group not found
+        return null;
+    }
+
+    const result: IGroupService.singleGroup = {
+        id: group.id,
+        name: group.name,
+        users: _.map(group.UsersInGroups, (x) => x.userId)
+    };
+
+    return result;
 };
 
+/**
+ * List all groups
+ * @param prisma
+ * @returns
+ */
+export const getGroups = async (prisma: PrismaClient) => {
+    logger.debug('Getting all groups');
+
+    const group = await prisma.group.findMany({});
+
+    return _.map(group, (x) => {
+        return {
+            id: x.id,
+            name: x.name
+        };
+    });
+};
+
+/**
+ * Update single group
+ * @param groupId
+ * @param newName
+ * @param prisma
+ * @returns
+ */
 export const updateGroup = async (
     groupId: string,
     newName: string,
@@ -59,7 +110,7 @@ export const updateGroup = async (
         return null;
     }
 
-    const newGroup = await prisma.group.update({
+    const updatedGroup = await prisma.group.update({
         where: {
             id: groupId
         },
@@ -68,9 +119,20 @@ export const updateGroup = async (
         }
     });
 
-    return newGroup;
+    const updatedGroupData: IGroupService.GroupWithoutUsers = {
+        id: updatedGroup.id,
+        name: updatedGroup.name
+    };
+
+    return updatedGroupData;
 };
 
+/**
+ * Delete single group if its empty
+ * @param groupId
+ * @param prisma
+ * @returns
+ */
 export const deleteGroup = async (groupId: string, prisma: PrismaClient) => {
     logger.debug(`Deleting group with ID: ${groupId}`);
 
@@ -94,7 +156,7 @@ export const deleteGroup = async (groupId: string, prisma: PrismaClient) => {
 
     if (users.length > 0) {
         // Users in group
-        return null;
+        return false;
     }
 
     await prisma.group.delete({
@@ -106,11 +168,19 @@ export const deleteGroup = async (groupId: string, prisma: PrismaClient) => {
     return true;
 };
 
+/**
+ * Add array of users to a single group
+ * @param groupId
+ * @param userIds
+ * @param prisma
+ * @param callerId
+ * @returns
+ */
 export const addUsersToGroup = async (
     groupId: string,
     userIds: string[],
     prisma: PrismaClient,
-    calledId?: string
+    callerId?: string
 ) => {
     logger.debug(`Deleting group with ID: ${groupId}`);
 
@@ -136,24 +206,35 @@ export const addUsersToGroup = async (
 
     if (userIds.length !== users.length) {
         // Not all users exist
-        return null;
+        return false;
     }
 
-    const usersAndGroups = _.map(userIds, (id) => {
-        return {
-            userId: id,
-            groupId: groupId,
-            assignedBy: calledId
-        };
-    });
-
     await prisma.usersInGroups.createMany({
-        data: usersAndGroups
+        data: _.map(userIds, (id) => {
+            return {
+                userId: id,
+                groupId: groupId,
+                assignedBy: callerId
+            };
+        })
     });
 
-    return true;
+    const result: IGroupService.singleGroup = {
+        id: group.id,
+        name: group.name,
+        users: userIds
+    };
+
+    return result;
 };
 
+/**
+ * Remove single user from a group
+ * @param groupId
+ * @param userId
+ * @param prisma
+ * @returns
+ */
 export const removeUserFromGroup = async (
     groupId: string,
     userId: string,

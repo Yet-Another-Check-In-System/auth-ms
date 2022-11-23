@@ -1,8 +1,8 @@
 import { Router } from 'express';
-import * as responses from '../../utils/responses';
-import validateRequest from '../../middlewares/validateRequest';
 import { body, query } from 'express-validator';
+
 import * as groupController from '../../controllers/groupController';
+import validateRequest from '../../middlewares/validateRequest';
 
 export const router = Router();
 
@@ -18,7 +18,7 @@ router.post(
     '/',
     body('name').not().isEmpty().trim().escape(),
     validateRequest(),
-    groupController.createNewGroup
+    groupController.createGroup
 );
 
 /**
@@ -39,7 +39,7 @@ router.patch(
     query('groupId').not().isEmpty().isUUID().trim().escape(),
     body('name').not().isEmpty().trim().escape(),
     validateRequest(),
-    responses.notImplemented
+    groupController.updateGroup
 );
 
 /**
@@ -49,7 +49,7 @@ router.delete(
     '/:groupId',
     query('groupId').not().isEmpty().isUUID().trim().escape(),
     validateRequest(),
-    responses.notImplemented
+    groupController.deleteGroup
 );
 
 /**
@@ -61,7 +61,7 @@ router.patch(
     body().isArray(),
     body('*').isUUID(),
     validateRequest(),
-    responses.notImplemented
+    groupController.addUsersToGroup
 );
 
 /**
@@ -72,5 +72,5 @@ router.delete(
     query('groupId').not().isEmpty().isUUID().trim().escape(),
     query('userId').not().isEmpty().isUUID().trim().escape(),
     validateRequest(),
-    responses.notImplemented
+    groupController.removeUserFromGroup
 );

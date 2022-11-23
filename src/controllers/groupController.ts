@@ -5,17 +5,36 @@ import logger from '../utils/logger';
 import prisma from '../utils/prismaHandler';
 import * as responses from '../utils/responses';
 
-export const createNewGroup = async (
+export const createGroup = async (
     req: Request,
     res: Response,
     next: NextFunction
 ) => {
     try {
         const name = req.body.name as string;
-
         const createdGroup = await groupService.createGroup(name, prisma);
 
         return responses.created(req, res, createdGroup);
+    } catch (err: unknown) {
+        logger.error(err);
+        next(err);
+    }
+};
+
+export const getGroup = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    try {
+        const groupId = req.query.groupId as string;
+        const foundGroup = await groupService.getGroup(groupId, prisma);
+
+        if (!foundGroup) {
+            return responses.notFound(req, res);
+        }
+
+        return responses.ok(req, res, foundGroup);
     } catch (err: unknown) {
         logger.error(err);
         next(err);
@@ -41,20 +60,108 @@ export const getGroups = async (
     }
 };
 
-export const getGroup = async (
+export const updateGroup = async (
     req: Request,
     res: Response,
     next: NextFunction
 ) => {
     try {
         const groupId = req.query.groupId as string;
-        const foundGroup = await groupService.getGroup(groupId, prisma);
+        const name = req.body.name as string;
+        const updatedGroup = await groupService.updateGroup(
+            groupId,
+            name,
+            prisma
+        );
 
-        if (!foundGroup) {
+        if (!updatedGroup) {
             return responses.notFound(req, res);
         }
 
-        return responses.ok(req, res, foundGroup);
+        return responses.ok(req, res, updatedGroup);
+    } catch (err: unknown) {
+        logger.error(err);
+        next(err);
+    }
+};
+
+export const deleteGroup = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    try {
+        const groupId = req.query.groupId as string;
+        const operationSuccessful = await groupService.deleteGroup(
+            groupId,
+            prisma
+        );
+
+        if (operationSuccessful === null) {
+            return responses.notFound(req, res);
+        }
+
+        // False is returned if there are still users in the group
+        if (operationSuccessful === false) {
+            return responses.badRequest(req, res);
+        }
+
+        return responses.noContent(req, res);
+    } catch (err: unknown) {
+        logger.error(err);
+        next(err);
+    }
+};
+
+export const addUsersToGroup = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    try {
+        const groupId = req.query.groupId as string;
+        const users = req.body as string[];
+        const result = await groupService.addUsersToGroup(
+            groupId,
+            users,
+            prisma
+        );
+
+        if (result === null) {
+            return responses.notFound(req, res);
+        }
+
+        // All users don't exist
+        if (result === false) {
+            return responses.badRequest(req, res);
+        }
+
+        return responses.ok(req, res, result);
+    } catch (err: unknown) {
+        logger.error(err);
+        next(err);
+    }
+};
+
+export const removeUserFromGroup = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    try {
+        const groupId = req.query.groupId as string;
+        const userId = req.query.userId as string;
+        const operationSuccessful = await groupService.removeUserFromGroup(
+            groupId,
+            userId,
+            prisma
+        );
+
+        if (!operationSuccessful) {
+            return responses.badRequest(req, res);
+        }
+
+        return responses.noContent(req, res);
     } catch (err: unknown) {
         logger.error(err);
         next(err);
