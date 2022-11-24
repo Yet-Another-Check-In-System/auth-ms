@@ -1,13 +1,19 @@
 import { NextFunction, Request, Response } from 'express';
+import jwt from 'jsonwebtoken';
 
+import { ExportedUser, SignupLocalUser } from '../interfaces/IAuthService';
 import * as responses from '../utils/responses';
-import { logInLocalUser, signUpLocalUser } from './authController';
-import { ExportedUser } from '../interfaces/IAuthService';
+import { logIn, signUpLocalUser } from './authController';
+import * as authService from '../services/authService';
 
+jest.mock('jsonwebtoken');
 jest.mock('../utils/logger');
 jest.mock('../utils/responses');
+jest.mock('../services/authService');
 
 const mockedResponses = jest.mocked(responses);
+const mockedJwt = jest.mocked(jwt);
+const mockedAuthService = jest.mocked(authService);
 
 describe('authController', () => {
     let mockRequest: Partial<Request>;
@@ -18,60 +24,79 @@ describe('authController', () => {
         jest.resetAllMocks();
     });
 
-    describe('logInLocalUser', () => {
+    describe('logIn', () => {
         beforeEach(() => {
-            mockResponse = {
-                Token: undefined
+            mockRequest = {
+                User: {
+                    id: 'aa9ea8fc-c315-447c-a7e4-3a9b20830123',
+                    firstName: 'Dummy',
+                    lastName: 'User',
+                    email: 'test@email.com',
+                    country: 'FI',
+                    company: 'Test company Oy'
+                }
             };
+
+            process.env.JWT_SECRET = 'secret';
         });
 
-        it('Should return internal server error when token not set', async () => {
-            await logInLocalUser(
+        it('Should call next with error when user not set', async () => {
+            delete mockRequest.User;
+
+            await logIn(
                 mockRequest as Request,
                 mockResponse as Response,
                 mockNext
             );
 
-            expect(mockNext).not.toBeCalled();
+            expect(mockNext).toBeCalledTimes(1);
+            expect(mockNext).toBeCalledWith(
+                new Error('User not set correctly')
+            );
             expect(mockedResponses.ok).not.toBeCalled();
-            expect(responses.internalServerError).toBeCalledTimes(1);
-            expect(responses.internalServerError).toBeCalledWith(
-                mockRequest,
-                mockResponse
-            );
         });
 
-        it('Should return ok when token exists', async () => {
-            mockResponse = {
-                Token: 'testToken'
-            };
+        it('Should call next with error when JWT_SECRET not set', async () => {
+            delete process.env.JWT_SECRET;
 
-            await logInLocalUser(
+            await logIn(
+                mockRequest as Request,
+                mockResponse as Response,
+                mockNext
+            );
+
+            expect(mockNext).toBeCalledTimes(1);
+            expect(mockNext).toBeCalledWith(
+                new Error('JWT_SECRET not set correctly')
+            );
+            expect(mockedResponses.ok).not.toBeCalled();
+        });
+
+        it('Should return ok when login successful', async () => {
+            mockedJwt.sign.mockImplementationOnce(() => {
+                return 'testToken';
+            });
+
+            await logIn(
                 mockRequest as Request,
                 mockResponse as Response,
                 mockNext
             );
 
             expect(mockNext).not.toBeCalled();
-            expect(mockedResponses.internalServerError).not.toBeCalled();
             expect(mockedResponses.ok).toBeCalledTimes(1);
-            expect(mockedResponses.ok).toBeCalledWith(
-                mockRequest,
-                mockResponse,
-                { token: 'testToken' }
-            );
         });
 
         it('Should call next with error when error thrown', async () => {
-            mockResponse = {
-                Token: 'testToken'
-            };
+            mockedJwt.sign.mockImplementationOnce(() => {
+                return 'testToken';
+            });
 
             mockedResponses.ok.mockImplementationOnce(() => {
                 throw new Error('test error');
             });
 
-            await logInLocalUser(
+            await logIn(
                 mockRequest as Request,
                 mockResponse as Response,
                 mockNext
@@ -85,40 +110,45 @@ describe('authController', () => {
 
     describe('signUpLocalUser', () => {
         beforeEach(() => {
+            const body: SignupLocalUser = {
+                firstName: 'Test',
+                lastName: 'User',
+                email: 'test@email.com',
+                country: 'FI',
+                company: 'TestCompany Oy',
+                password: '12345678'
+            };
+
             mockRequest = {
-                User: undefined
+                body: body
             };
         });
 
-        it('Should return internal server error when user not set', async () => {
+        it('Should return bad request when user already exists', async () => {
+            mockedAuthService.signupLocal.mockResolvedValueOnce(null);
+
             await signUpLocalUser(
                 mockRequest as Request,
                 mockResponse as Response,
                 mockNext
             );
 
+            expect(mockedResponses.badRequest).toBeCalledTimes(1);
+            expect(mockedResponses.created).not.toBeCalled();
             expect(mockNext).not.toBeCalled();
-            expect(mockedResponses.ok).not.toBeCalled();
-            expect(responses.internalServerError).toBeCalledTimes(1);
-            expect(responses.internalServerError).toBeCalledWith(
-                mockRequest,
-                mockResponse
-            );
         });
 
         it('Should return created when user exists', async () => {
-            const user: ExportedUser = {
+            const exportedUser: ExportedUser = {
                 id: 'fa16b447-0544-4e3f-a5dd-8d2241c3a352',
                 firstName: 'Test',
                 lastName: 'User',
                 email: 'test@email.com',
-                country: 'Finland',
+                country: 'FI',
                 company: 'TestCompany Oy'
             };
 
-            mockRequest = {
-                User: user
-            };
+            mockedAuthService.signupLocal.mockResolvedValueOnce(exportedUser);
 
             await signUpLocalUser(
                 mockRequest as Request,
@@ -126,30 +156,13 @@ describe('authController', () => {
                 mockNext
             );
 
-            expect(mockNext).not.toBeCalled();
-            expect(mockedResponses.internalServerError).not.toBeCalled();
             expect(mockedResponses.created).toBeCalledTimes(1);
-            expect(mockedResponses.created).toBeCalledWith(
-                mockRequest,
-                mockResponse,
-                { email: user.email }
-            );
+            expect(mockedResponses.badRequest).not.toBeCalled();
+            expect(mockNext).not.toBeCalled();
         });
+
         it('Should call next with error when error thrown', async () => {
-            const user: ExportedUser = {
-                id: 'fa16b447-0544-4e3f-a5dd-8d2241c3a352',
-                firstName: 'Test',
-                lastName: 'User',
-                email: 'test@email.com',
-                country: 'Finland',
-                company: 'TestCompany Oy'
-            };
-
-            mockRequest = {
-                User: user
-            };
-
-            mockedResponses.created.mockImplementationOnce(() => {
+            mockedAuthService.signupLocal.mockImplementationOnce(() => {
                 throw new Error('test error');
             });
 

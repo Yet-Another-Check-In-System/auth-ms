@@ -1,22 +1,50 @@
 import { NextFunction, Request, Response } from 'express';
+import jwt from 'jsonwebtoken';
+import { DateTime } from 'luxon';
 
-import * as IUserService from '../interfaces/IAuthService';
+import { SignupLocalUser } from '../interfaces/IAuthService';
+import * as authService from '../services/authService';
 import logger from '../utils/logger';
+import prisma from '../utils/prismaHandler';
 import * as responses from '../utils/responses';
 
-export const logInLocalUser = async (
+export const logIn = async (
     req: Request,
     res: Response,
     next: NextFunction
 ) => {
     try {
-        const token: string | undefined = res.Token;
+        const user = req.User;
 
-        if (!token) {
-            return responses.internalServerError(req, res);
+        if (!user) {
+            throw new Error('User not set correctly');
         }
 
-        return responses.ok(req, res, { token });
+        const secret = process.env.JWT_SECRET;
+        logger.debug(`JWT_SECRET: ${secret}`);
+
+        if (!secret) {
+            throw new Error('JWT_SECRET not set correctly');
+        }
+
+        const id = user.id;
+        delete user.id;
+
+        const tokenExpiration = DateTime.utc().plus({ hours: 12 });
+        const token = jwt.sign(
+            { ...user, exp: tokenExpiration.toSeconds() },
+            secret,
+            {
+                audience: ['yacis:auth', 'yacis:checkin', 'yacis:admin'],
+                issuer: 'yacis:auth',
+                subject: id
+            }
+        );
+
+        return responses.ok(req, res, {
+            token,
+            expiresIn: tokenExpiration.toSeconds()
+        });
     } catch (err: unknown) {
         logger.error(err);
         next(err);
@@ -29,14 +57,21 @@ export const signUpLocalUser = async (
     next: NextFunction
 ) => {
     try {
-        const user: IUserService.ExportedUser | undefined = req.User;
+        const body: SignupLocalUser = req.body;
+
+        // Try to create user
+        const user = await authService.signupLocal(body, prisma);
 
         if (!user) {
-            return responses.internalServerError(req, res);
+            return responses.badRequest(
+                req,
+                res,
+                'The email is already associated with an account.'
+            );
         }
 
         return responses.created(req, res, { email: user.email });
-    } catch (err: unknown) {
+    } catch (err) {
         logger.error(err);
         next(err);
     }
