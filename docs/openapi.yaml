@@ -241,6 +241,67 @@ paths:
                     description: Not Found
                 '500':
                     description: Internal Server Error
+        patch:
+            tags:
+                - User management
+            description: Update user
+            parameters:
+                - in: path
+                  name: userId
+                  schema:
+                      type: string
+                      format: uuid
+                  required: true
+                  description: ID of the user
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                email:
+                                    type: string
+                                    format: email
+                                firstName:
+                                    type: string
+                                lastName:
+                                    type: string
+                                country:
+                                    type: string
+                                company:
+                                    type: string
+            responses:
+                '200':
+                    description: Ok
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    user:
+                                        type: object
+                                        properties:
+                                            id:
+                                                type: string
+                                                format: uuid
+                                            firstName:
+                                                type: string
+                                            lastName:
+                                                type: string
+                                            email:
+                                                type: string
+                                                format: email
+                                            country:
+                                                type: string
+                                            company:
+                                                type: string
+                                            lastActivity:
+                                                type: string
+                                                format: date-time
+                '404':
+                    description: Not Found
+                '500':
+                    description: Internal Server Error
         delete:
             tags:
                 - User management
