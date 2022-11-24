@@ -21,7 +21,7 @@ tags:
     - name: Maintenance
       description: Health check
 paths:
-    /api/auth/login:
+    /api/auth/local/login:
         post:
             tags:
                 - Authentication
@@ -56,7 +56,7 @@ paths:
                     description: Bad Request
                 '500':
                     description: Internal Server Error
-    /api/auth/signup:
+    /api/auth/local/signup:
         post:
             tags:
                 - Authentication
@@ -96,7 +96,7 @@ paths:
                     description: Bad Request
                 '500':
                     description: Internal Server Error
-    /api/auth/apple:
+    /api/auth/social/apple:
         post:
             tags:
                 - Authentication
@@ -116,7 +116,7 @@ paths:
                     description: Bad Request
                 '500':
                     description: Internal Server Error
-    /api/auth/google:
+    /api/auth/social/google:
         post:
             tags:
                 - Authentication
@@ -136,7 +136,7 @@ paths:
                     description: Bad Request
                 '500':
                     description: Internal Server Error
-    /api/auth/microsoft:
+    /api/auth/social/microsoft:
         post:
             tags:
                 - Authentication
