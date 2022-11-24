@@ -57,32 +57,39 @@ export const verifyLocalLogin = async (
 };
 
 export const signupLocal = async (
-    data: SignupLocalUser,
+    signUpData: SignupLocalUser,
     prisma: PrismaClient
 ): Promise<ExportedUser | null> => {
     const user = await prisma.user.findFirst({
+        select: {
+            id: true,
+            email: true
+        },
         where: {
-            email: data.email
+            email: signUpData.email
         }
     });
 
     // Check if user already exists with the email
     if (user) {
         logger.warn(
-            `Email "${data.email}" is already associated with an account.`
+            `Email "${signUpData.email}" is already associated with an account.`
         );
         return null;
     }
 
     const expiryDate = DateTime.utc().plus({ years: 1 });
+    const userData = {
+        ...signUpData,
+        password: await bcrypt.hash(signUpData.password, 10),
+        expireAt: expiryDate.toJSDate()
+    };
+
+    logger.debug(`Sign up with data: ${JSON.stringify(userData)}`);
 
     // Insert new user to database
     const createdUser = await prisma.user.create({
-        data: {
-            ...data,
-            password: await bcrypt.hash(data.password, 10),
-            expireAt: expiryDate.toJSDate()
-        }
+        data: userData
     });
 
     const exportedUser: ExportedUser = {

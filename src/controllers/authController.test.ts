@@ -138,7 +138,7 @@ describe('authController', () => {
             expect(mockNext).not.toBeCalled();
         });
 
-        it('Should return created when user exists', async () => {
+        it('Should return created when user is created successfully', async () => {
             const exportedUser: ExportedUser = {
                 id: 'fa16b447-0544-4e3f-a5dd-8d2241c3a352',
                 firstName: 'Test',
@@ -157,6 +157,11 @@ describe('authController', () => {
             );
 
             expect(mockedResponses.created).toBeCalledTimes(1);
+            expect(mockedResponses.created).toBeCalledWith(
+                mockRequest,
+                mockResponse,
+                { id: exportedUser.id, email: exportedUser.email }
+            );
             expect(mockedResponses.badRequest).not.toBeCalled();
             expect(mockNext).not.toBeCalled();
         });

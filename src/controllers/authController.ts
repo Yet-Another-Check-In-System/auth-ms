@@ -70,7 +70,7 @@ export const signUpLocalUser = async (
             );
         }
 
-        return responses.created(req, res, { email: user.email });
+        return responses.created(req, res, { id: user.id, email: user.email });
     } catch (err) {
         logger.error(err);
         next(err);
