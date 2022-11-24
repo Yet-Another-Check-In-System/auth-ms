@@ -1,10 +1,11 @@
-import { verifyLocalLogin, signupLocal } from './userService';
-import { prismaMock } from '../utils/prismaMock';
 import bcrypt from 'bcryptjs';
+
+import { prismaMock } from '../utils/prismaMock';
+import { signupLocal, verifyLocalLogin } from './authService';
 
 jest.mock('../utils/logger');
 
-describe('userService', () => {
+describe('authService', () => {
     beforeEach(() => {
         jest.resetAllMocks();
     });
@@ -27,6 +28,7 @@ describe('userService', () => {
                 id: 'aea9f718-0058-4edf-a764-40c4a837b38b',
                 createdAt: new Date(),
                 updatedAt: new Date(),
+                expireAt: new Date(),
                 firstName: 'Test',
                 lastName: 'User',
                 email: 'test@email.com',
@@ -34,9 +36,9 @@ describe('userService', () => {
                 country: 'Finland',
                 company: 'TestCompany Oy',
                 password: null,
+                appleId: null,
                 googleId: '95a6f9e8-1829-49a0-b938-0b3db98f2044',
-                microsoftId: null,
-                githubId: null
+                microsoftId: null
             });
 
             const res = await verifyLocalLogin(
@@ -53,6 +55,7 @@ describe('userService', () => {
                 id: 'aea9f718-0058-4edf-a764-40c4a837b38b',
                 createdAt: new Date(),
                 updatedAt: new Date(),
+                expireAt: new Date(),
                 firstName: 'Test',
                 lastName: 'User',
                 email: 'test@email.com',
@@ -60,9 +63,9 @@ describe('userService', () => {
                 country: 'Finland',
                 company: 'TestCompany Oy',
                 password: bcrypt.hashSync('testPw', 10),
+                appleId: null,
                 googleId: '95a6f9e8-1829-49a0-b938-0b3db98f2044',
-                microsoftId: null,
-                githubId: null
+                microsoftId: null
             });
 
             const res = await verifyLocalLogin(
@@ -79,6 +82,7 @@ describe('userService', () => {
                 id: 'aea9f718-0058-4edf-a764-40c4a837b38b',
                 createdAt: new Date(),
                 updatedAt: new Date(),
+                expireAt: new Date(),
                 firstName: 'Test',
                 lastName: 'User',
                 email: 'test@email.com',
@@ -86,9 +90,9 @@ describe('userService', () => {
                 country: 'Finland',
                 company: 'TestCompany Oy',
                 password: bcrypt.hashSync('testPw', 10),
+                appleId: null,
                 googleId: '95a6f9e8-1829-49a0-b938-0b3db98f2044',
-                microsoftId: null,
-                githubId: null
+                microsoftId: null
             };
 
             prismaMock.user.findFirst.mockResolvedValueOnce(user);
@@ -117,6 +121,7 @@ describe('userService', () => {
                 id: 'aea9f718-0058-4edf-a764-40c4a837b38b',
                 createdAt: new Date(),
                 updatedAt: new Date(),
+                expireAt: new Date(),
                 firstName: 'Test',
                 lastName: 'User',
                 email: 'test@email.com',
@@ -124,9 +129,9 @@ describe('userService', () => {
                 country: 'Finland',
                 company: 'TestCompany Oy',
                 password: bcrypt.hashSync('testPw', 10),
+                appleId: null,
                 googleId: '95a6f9e8-1829-49a0-b938-0b3db98f2044',
-                microsoftId: null,
-                githubId: null
+                microsoftId: null
             });
 
             const res = await signupLocal(
@@ -150,6 +155,7 @@ describe('userService', () => {
                 id: '91179c21-0c48-4abc-aa0c-42b284aaa55b',
                 createdAt: new Date(),
                 updatedAt: new Date(),
+                expireAt: new Date(),
                 firstName: 'Test',
                 lastName: 'User',
                 email: 'test@email.com',
@@ -157,9 +163,9 @@ describe('userService', () => {
                 country: 'Finland',
                 company: 'TestCompany Oy',
                 password: bcrypt.hashSync('testPw', 10),
+                appleId: null,
                 googleId: null,
-                microsoftId: null,
-                githubId: null
+                microsoftId: null
             });
 
             const res = await signupLocal(

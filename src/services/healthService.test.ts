@@ -1,6 +1,7 @@
-import { checkHealth } from './healthService';
-import { prismaMock } from '../utils/prismaMock';
 import { PrismaClientInitializationError } from '@prisma/client/runtime';
+
+import { prismaMock } from '../utils/prismaMock';
+import { checkHealth } from './healthService';
 
 jest.mock('../utils/logger');
 

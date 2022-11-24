@@ -1,11 +1,10 @@
 import { Router } from 'express';
-import loginLocal from '../../middlewares/localLogin';
-import writeJwt from '../../middlewares/writeJwt';
 import { body } from 'express-validator';
+
+import * as userController from '../../controllers/authController';
+import loginLocal from '../../middlewares/localLogin';
 import validateRequest from '../../middlewares/validateRequest';
-import * as userController from '../../controllers/userController';
 import * as responses from '../../utils/responses';
-import signupLocal from '../../middlewares/signupLocal';
 
 export const router = Router();
 
@@ -18,8 +17,7 @@ router.post(
     body('password').isLength({ min: 8 }),
     validateRequest(),
     loginLocal(),
-    writeJwt(),
-    userController.logInLocalUser
+    userController.logIn
 );
 
 /**
@@ -38,17 +36,16 @@ router.post('/login/google', responses.notImplemented);
 router.post('/login/microsoft', responses.notImplemented);
 
 /**
- * Register
+ * Sign up
  */
 router.post(
     '/signup',
     body('email').isEmail(),
     body('password').isLength({ min: 8 }),
-    body('firstname').not().isEmpty(),
-    body('lastname').not().isEmpty(),
-    body('country').not().isEmpty(),
-    body('company').not().isEmpty(),
+    body('firstname').not().isEmpty().trim().escape(),
+    body('lastname').not().isEmpty().trim().escape(),
+    body('country').not().isEmpty().trim().escape().isISO31661Alpha2(),
+    body('company').not().isEmpty().trim().escape(),
     validateRequest(),
-    signupLocal(),
     userController.signUpLocalUser
 );
