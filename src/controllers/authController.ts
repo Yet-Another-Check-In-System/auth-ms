@@ -43,7 +43,7 @@ export const logIn = async (
 
         return responses.ok(req, res, {
             token,
-            expiresIn: tokenExpiration.toSeconds()
+            expiresAt: tokenExpiration.toISO()
         });
     } catch (err: unknown) {
         logger.error(err);
