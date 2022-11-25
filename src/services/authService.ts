@@ -2,7 +2,7 @@ import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 import { DateTime } from 'luxon';
 
-import { ExportedUser, SignupLocalUser } from '../interfaces/IAuthService';
+import { ExportedUser, SignupLocalUser } from '../interfaces/IAuth';
 import logger from '../utils/logger';
 
 export const verifyLocalLogin = async (

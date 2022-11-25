@@ -3,7 +3,7 @@ export interface GroupWithoutUsers {
     name: string;
 }
 
-export interface singleGroup {
+export interface SingleGroup {
     id: string;
     name: string;
     users: string[];

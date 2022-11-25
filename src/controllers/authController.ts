@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import { DateTime } from 'luxon';
 
-import { SignupLocalUser } from '../interfaces/IAuthService';
+import { SignupLocalUser } from '../interfaces/IAuth';
 import * as authService from '../services/authService';
 import logger from '../utils/logger';
 import prisma from '../utils/prismaHandler';

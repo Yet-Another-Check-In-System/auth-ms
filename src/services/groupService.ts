@@ -1,7 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 import _ from 'lodash';
 
-import * as IGroupService from '../interfaces/IGroupService';
+import * as IGroupService from '../interfaces/IGroup';
 import logger from '../utils/logger';
 
 /**
@@ -19,7 +19,7 @@ export const createGroup = async (name: string, prisma: PrismaClient) => {
         }
     });
 
-    const newGroupData: IGroupService.singleGroup = {
+    const newGroupData: IGroupService.SingleGroup = {
         id: group.id,
         name: group.name,
         users: []
@@ -58,7 +58,7 @@ export const getGroup = async (groupId: string, prisma: PrismaClient) => {
         return null;
     }
 
-    const result: IGroupService.singleGroup = {
+    const result: IGroupService.SingleGroup = {
         id: group.id,
         name: group.name,
         users: _.map(group.UsersInGroups, (x) => x.userId)
@@ -219,7 +219,7 @@ export const addUsersToGroup = async (
         })
     });
 
-    const result: IGroupService.singleGroup = {
+    const result: IGroupService.SingleGroup = {
         id: group.id,
         name: group.name,
         users: userIds

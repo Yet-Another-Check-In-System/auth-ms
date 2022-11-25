@@ -1,7 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 import { PrismaClientInitializationError } from '@prisma/client/runtime';
 
-import { IHealthService } from '../interfaces/IHealthService';
+import { IHealthService } from '../interfaces/IHealth';
 import logger from '../utils/logger';
 
 export const checkHealth = async (

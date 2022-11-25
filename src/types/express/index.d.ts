@@ -1,4 +1,4 @@
-import { ExportedUser } from '../../interfaces/IAuthService';
+import { ExportedUser } from '../../interfaces/IAuth';
 
 // to make the file a module and avoid the TypeScript error
 export {};
