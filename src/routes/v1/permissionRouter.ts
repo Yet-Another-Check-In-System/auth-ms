@@ -14,12 +14,6 @@ export const router = Router();
 router.get('/user/:userId', responses.notImplemented);
 
 /**
- * Update permissions for user
- * Requires admin authentication
- */
-router.put('/user/:userId', responses.notImplemented);
-
-/**
  * Get all permissions for user group
  * Requires admin authentication for other users
  */
