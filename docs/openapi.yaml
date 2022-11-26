@@ -101,6 +101,13 @@ paths:
             tags:
                 - Authentication
             description: Login using Apple account
+            parameters:
+                - in: query
+                  name: createAccount
+                  schema:
+                      type: boolean
+                      default: false
+                  description: Should account be created for user if it does not already exists
             responses:
                 '200':
                     description: Ok
@@ -112,6 +119,9 @@ paths:
                                     token:
                                         type: string
                                         description: JWT for authorization
+                                    expiresAt:
+                                        type: string
+                                        format: date-time
                 '400':
                     description: Bad Request
                 '500':
@@ -121,6 +131,13 @@ paths:
             tags:
                 - Authentication
             description: Login using Google account
+            parameters:
+                - in: query
+                  name: createAccount
+                  schema:
+                      type: boolean
+                      default: false
+                  description: Should account be created for user if it does not already exists
             responses:
                 '200':
                     description: Ok
@@ -132,6 +149,9 @@ paths:
                                     token:
                                         type: string
                                         description: JWT for authorization
+                                    expiresAt:
+                                        type: string
+                                        format: date-time
                 '400':
                     description: Bad Request
                 '500':
@@ -141,6 +161,13 @@ paths:
             tags:
                 - Authentication
             description: Login using Microsoft account
+            parameters:
+                - in: query
+                  name: createAccount
+                  schema:
+                      type: boolean
+                      default: false
+                  description: Should account be created for user if it does not already exists
             responses:
                 '200':
                     description: Ok
@@ -152,6 +179,9 @@ paths:
                                     token:
                                         type: string
                                         description: JWT for authorization
+                                    expiresAt:
+                                        type: string
+                                        format: date-time
                 '400':
                     description: Bad Request
                 '500':
@@ -192,8 +222,6 @@ paths:
                                                 lastActivity:
                                                     type: string
                                                     format: date-time
-                '400':
-                    description: Bad Request
                 '500':
                     description: Internal Server Error
     /api/user/{userId}:
