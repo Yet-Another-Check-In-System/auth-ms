@@ -12,7 +12,7 @@ export const router = Router();
  * Login
  */
 router.post(
-    '/login',
+    '/local/login',
     body('email').isEmail(),
     body('password').isLength({ min: 8 }),
     validateRequest(),
@@ -23,23 +23,23 @@ router.post(
 /**
  * Login with Apple
  */
-router.post('/login/apple', responses.notImplemented);
+router.post('/login/social/apple', responses.notImplemented);
 
 /**
  * Login with Google
  */
-router.post('/login/google', responses.notImplemented);
+router.post('/login/social/google', responses.notImplemented);
 
 /**
  * Login with Microsoft
  */
-router.post('/login/microsoft', responses.notImplemented);
+router.post('/login/social/microsoft', responses.notImplemented);
 
 /**
  * Sign up
  */
 router.post(
-    '/signup',
+    '/local/signup',
     body('email').isEmail(),
     body('password').isLength({ min: 8 }),
     body('firstName').not().isEmpty().trim().escape(),

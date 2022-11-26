@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 
-import { ExportedUser, SignupLocalUser } from '../interfaces/IAuthService';
+import { ExportedUser, SignupLocalUser } from '../interfaces/IAuth';
 import * as responses from '../utils/responses';
 import { logIn, signUpLocalUser } from './authController';
 import * as authService from '../services/authService';

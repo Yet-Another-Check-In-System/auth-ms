@@ -1,8 +1,9 @@
 import { NextFunction, Request, Response } from 'express';
-import logger from '../utils/logger';
+
 import { checkHealth } from '../services/healthService';
-import * as responses from '../utils/responses';
+import logger from '../utils/logger';
 import prisma from '../utils/prismaHandler';
+import * as responses from '../utils/responses';
 
 export const get = async (req: Request, res: Response, next: NextFunction) => {
     try {
