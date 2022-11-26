@@ -20,7 +20,13 @@ router.get('/user/:userId', responses.notImplemented);
 router.get('/group/:groupId', responses.notImplemented);
 
 /**
- * Update permissions for user group
+ * Add permissions for user group
  * Requires admin authentication
  */
-router.put('/group/:groupId', responses.notImplemented);
+router.patch('/group/:groupId', responses.notImplemented);
+
+/**
+ * Delete permissions from user group
+ * Requires admin authentication
+ */
+router.delete('/group/:groupId', responses.notImplemented);
