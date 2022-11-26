@@ -1,6 +1,6 @@
 import { Router } from 'express';
 
-import { body, query } from 'express-validator';
+import { body, param } from 'express-validator';
 import * as userController from '../../controllers/userController';
 import validateRequest from '../../middlewares/validateRequest';
 
@@ -19,7 +19,7 @@ router.get('/', userController.getAllUsers);
  */
 router.get(
     '/:userId',
-    query('groupId').not().isEmpty().isUUID().trim().escape(),
+    param('userId').not().isEmpty().isUUID().trim().escape(),
     validateRequest(),
     userController.getSingleUser
 );
@@ -31,7 +31,7 @@ router.get(
  */
 router.patch(
     '/:userId',
-    query('groupId').not().isEmpty().isUUID().trim().escape(),
+    param('userId').not().isEmpty().isUUID().trim().escape(),
     body('email').optional({ nullable: true }).isEmail().trim().escape(),
     body('firstName').optional({ nullable: true }).trim().escape(),
     body('lastName').optional({ nullable: true }).trim().escape(),
@@ -52,7 +52,7 @@ router.patch(
  */
 router.delete(
     '/:userId',
-    query('groupId').not().isEmpty().isUUID().trim().escape(),
+    param('userId').not().isEmpty().isUUID().trim().escape(),
     validateRequest(),
     userController.deleteSingleUser
 );

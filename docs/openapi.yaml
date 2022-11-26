@@ -187,7 +187,7 @@ paths:
                 '500':
                     description: Internal Server Error
 
-    /api/user:
+    /api/users:
         get:
             tags:
                 - User management
@@ -224,7 +224,7 @@ paths:
                                                     format: date-time
                 '500':
                     description: Internal Server Error
-    /api/user/{userId}:
+    /api/users/{userId}:
         get:
             tags:
                 - User management
@@ -350,7 +350,7 @@ paths:
                 '500':
                     description: Internal Server Error
 
-    /api/group:
+    /api/groups:
         get:
             tags:
                 - User groups
@@ -406,7 +406,7 @@ paths:
                     description: Bad Request
                 '500':
                     description: Internal Server Error
-    /api/group/{groupId}:
+    /api/groups/{groupId}:
         get:
             tags:
                 - User groups
@@ -497,7 +497,7 @@ paths:
                     description: Bad Request
                 '500':
                     description: Internal Server Error
-    /api/group/{groupId}/users:
+    /api/groups/{groupId}/users:
         patch:
             tags:
                 - User groups
@@ -540,7 +540,7 @@ paths:
                     description: Bad Request
                 '500':
                     description: Internal Server Error
-    /api/group/{groupId}/users/{userId}:
+    /api/groups/{groupId}/users/{userId}:
         delete:
             tags:
                 - User groups
@@ -568,7 +568,7 @@ paths:
                 '500':
                     description: Internal Server Error
 
-    /api/permission/user/{userId}:
+    /api/permissions/user/{userId}:
         get:
             tags:
                 - Permissions
@@ -603,7 +603,7 @@ paths:
                     description: Bad Request
                 '500':
                     description: Internal Server Error
-    /api/permission/group/{groupId}:
+    /api/permissions/group/{groupId}:
         get:
             tags:
                 - Permissions
