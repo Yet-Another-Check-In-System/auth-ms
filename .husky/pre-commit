@@ -3,4 +3,3 @@
 
 npm run lint
 npm run eslint -- --fix
-npm test -- --watchAll=false
