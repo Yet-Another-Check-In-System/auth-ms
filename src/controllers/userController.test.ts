@@ -96,7 +96,7 @@ describe('userController', () => {
     describe('getSingleUser', () => {
         beforeEach(() => {
             mockRequest = {
-                query: {
+                params: {
                     userId: '9d2ee86e-75d8-45e9-ac72-83f846e66e9e'
                 }
             };
@@ -165,7 +165,7 @@ describe('userController', () => {
     describe('updateSingleUser', () => {
         beforeEach(() => {
             mockRequest = {
-                query: {
+                params: {
                     userId: '9d2ee86e-75d8-45e9-ac72-83f846e66e9e'
                 },
                 body: {
@@ -251,7 +251,7 @@ describe('userController', () => {
     describe('deleteSingleUser', () => {
         beforeEach(() => {
             mockRequest = {
-                query: {
+                params: {
                     userId: '9d2ee86e-75d8-45e9-ac72-83f846e66e9e'
                 }
             };

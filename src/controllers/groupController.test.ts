@@ -81,7 +81,7 @@ describe('groupController', () => {
     describe('getGroup', () => {
         beforeEach(() => {
             mockRequest = {
-                query: {
+                params: {
                     groupId: '34c48a24-311e-412b-9716-e71f177ee6c4'
                 }
             };
@@ -221,7 +221,7 @@ describe('groupController', () => {
                 body: {
                     name: 'testName'
                 },
-                query: {
+                params: {
                     groupId: '4481923c-797d-4af7-abff-11d8c1b54767'
                 }
             };
@@ -280,7 +280,7 @@ describe('groupController', () => {
     describe('deleteGroup', () => {
         beforeEach(() => {
             mockRequest = {
-                query: {
+                params: {
                     groupId: '4481923c-797d-4af7-abff-11d8c1b54767'
                 }
             };
@@ -351,7 +351,7 @@ describe('groupController', () => {
     describe('addUsersToGroup', () => {
         beforeEach(() => {
             mockRequest = {
-                query: {
+                params: {
                     groupId: '4481923c-797d-4af7-abff-11d8c1b54767'
                 },
                 body: [
@@ -443,7 +443,7 @@ describe('groupController', () => {
                 body: {
                     name: 'testName'
                 },
-                query: {
+                params: {
                     groupId: '4481923c-797d-4af7-abff-11d8c1b54767'
                 }
             };

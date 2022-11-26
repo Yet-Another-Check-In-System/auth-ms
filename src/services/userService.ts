@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import * as IUser from '../interfaces/IUser';
+import logger from '../utils/logger';
 
 /**
  * Returns all registered users
@@ -7,6 +8,8 @@ import * as IUser from '../interfaces/IUser';
  * @returns
  */
 export const getAllUsers = async (prisma: PrismaClient) => {
+    logger.debug('Getting all users');
+
     const users = await prisma.user.findMany({
         select: {
             id: true,
@@ -28,6 +31,8 @@ export const getAllUsers = async (prisma: PrismaClient) => {
  * @returns
  */
 export const getSingleUser = async (userId: string, prisma: PrismaClient) => {
+    logger.debug(`Getting user with ID: ${userId}`);
+
     const user = await prisma.user.findFirst({
         select: {
             id: true,
@@ -62,6 +67,8 @@ export const updateSingleUser = async (
     patchedUser: IUser.PatchSingleUser,
     prisma: PrismaClient
 ) => {
+    logger.debug(`Updating user with ID: ${userId}`);
+
     const user = await prisma.user.findFirst({
         select: {
             id: true,
@@ -115,6 +122,8 @@ export const deleteSingleUser = async (
     userId: string,
     prisma: PrismaClient
 ) => {
+    logger.debug(`Deleting user with ID: ${userId}`);
+
     const user = await prisma.user.findFirst({
         select: {
             id: true

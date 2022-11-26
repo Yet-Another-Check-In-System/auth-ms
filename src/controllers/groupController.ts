@@ -27,7 +27,7 @@ export const getGroup = async (
     next: NextFunction
 ) => {
     try {
-        const groupId = req.query.groupId as string;
+        const groupId = req.params.groupId as string;
         const foundGroup = await groupService.getGroup(groupId, prisma);
 
         if (!foundGroup) {
@@ -66,7 +66,7 @@ export const updateGroup = async (
     next: NextFunction
 ) => {
     try {
-        const groupId = req.query.groupId as string;
+        const groupId = req.params.groupId as string;
         const name = req.body.name as string;
         const updatedGroup = await groupService.updateGroup(
             groupId,
@@ -91,7 +91,7 @@ export const deleteGroup = async (
     next: NextFunction
 ) => {
     try {
-        const groupId = req.query.groupId as string;
+        const groupId = req.params.groupId as string;
         const operationSuccessful = await groupService.deleteGroup(
             groupId,
             prisma
@@ -119,7 +119,7 @@ export const addUsersToGroup = async (
     next: NextFunction
 ) => {
     try {
-        const groupId = req.query.groupId as string;
+        const groupId = req.params.groupId as string;
         const users = req.body as string[];
         const result = await groupService.addUsersToGroup(
             groupId,
@@ -149,8 +149,8 @@ export const removeUserFromGroup = async (
     next: NextFunction
 ) => {
     try {
-        const groupId = req.query.groupId as string;
-        const userId = req.query.userId as string;
+        const groupId = req.params.groupId as string;
+        const userId = req.params.userId as string;
         const operationSuccessful = await groupService.removeUserFromGroup(
             groupId,
             userId,

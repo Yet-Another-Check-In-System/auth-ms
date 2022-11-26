@@ -27,7 +27,7 @@ export const getSingleUser = async (
     next: NextFunction
 ) => {
     try {
-        const userId = req.query.userId as string;
+        const userId = req.params.userId as string;
         const user = await userService.getSingleUser(userId, prisma);
 
         if (!user) {
@@ -48,7 +48,7 @@ export const updateSingleUser = async (
     next: NextFunction
 ) => {
     try {
-        const userId = req.query.userId as string;
+        const userId = req.params.userId as string;
         const body = req.body as IUser.PatchSingleUser;
 
         const updatedUser = await userService.updateSingleUser(
@@ -75,7 +75,7 @@ export const deleteSingleUser = async (
     next: NextFunction
 ) => {
     try {
-        const userId = req.query.userId as string;
+        const userId = req.params.userId as string;
         const result = await userService.deleteSingleUser(userId, prisma);
 
         if (!result) {
