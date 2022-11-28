@@ -27,6 +27,8 @@ describe('permissionService', () => {
 
         it.todo('Should return null when all given permissions dont exist');
 
+        it.todo('Should return false when trying to add duplicate permission');
+
         it.todo('Should return true when permissions are added successfully');
 
         it.todo('Should not handle any errors');
@@ -36,6 +38,14 @@ describe('permissionService', () => {
         it.todo('Should return null if the group not found');
 
         it.todo('Should return true when permissions are removed successfully');
+
+        it.todo('Should not handle any errors');
+    });
+
+    describe('getAllPermissions', () => {
+        it.todo('Should return all permissions');
+
+        it.todo('Should return empty array when no permissions found');
 
         it.todo('Should not handle any errors');
     });

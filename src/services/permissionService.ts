@@ -1,5 +1,4 @@
 import { PrismaClient } from '@prisma/client';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import _ from 'lodash';
 
 /**
@@ -13,7 +12,6 @@ export const getUserPermission = async (
     userId: string,
     prisma: PrismaClient
 ) => {
-    // Check user exists
     const user = await prisma.user.findFirst({
         select: {
             id: true
@@ -23,12 +21,12 @@ export const getUserPermission = async (
         }
     });
 
+    // User doesn't exist
     if (!user) {
-        // User doesn't exist
         return null;
     }
 
-    // Check groups user is in
+    // Check all groups the user is in
     const groups = await prisma.usersInGroups.findMany({
         select: {
             groupId: true
@@ -52,9 +50,8 @@ export const getUserPermission = async (
         }
     });
 
-    const permissionArray = _.map(permissions, (p) => p.permission);
-
     // Combine permissions and return them
+    const permissionArray = _.map(permissions, (p) => p.permission);
     const uniquePermissions = _.uniqBy(permissionArray, (x) => x.name);
 
     return uniquePermissions;
@@ -70,7 +67,6 @@ export const getGroupPermission = async (
     groupId: string,
     prisma: PrismaClient
 ) => {
-    // Check group exists
     const group = await prisma.group.findFirst({
         select: {
             id: true
@@ -80,8 +76,8 @@ export const getGroupPermission = async (
         }
     });
 
+    // Group not found
     if (!group) {
-        // Group not found
         return null;
     }
 
@@ -129,7 +125,7 @@ export const addPermissionsToGroup = async (
         return null;
     }
 
-    // Check that linked permissions exist
+    // Check that the given permissions exist
     const dbPermissions = await prisma.permission.findMany({
         select: {
             id: true
@@ -146,25 +142,16 @@ export const addPermissionsToGroup = async (
         return null;
     }
 
-    try {
-        await prisma.groupPermissions.createMany({
-            data: _.map(dbPermissions, (p) => {
-                return {
-                    groupId: groupId,
-                    permissionId: p.id,
-                    assignedBy: callerId
-                };
-            }),
-            skipDuplicates: true
-        });
-    } catch (err: unknown) {
-        // Duplicate entry
-        if (err instanceof PrismaClientKnownRequestError) {
-            return false;
-        } else {
-            throw err;
-        }
-    }
+    await prisma.groupPermissions.createMany({
+        data: _.map(dbPermissions, (p) => {
+            return {
+                groupId: groupId,
+                permissionId: p.id,
+                assignedBy: callerId
+            };
+        }),
+        skipDuplicates: true
+    });
 
     return true;
 };
@@ -189,8 +176,8 @@ export const removePermissionsFromGroup = async (
         }
     });
 
+    // Group not found
     if (!group) {
-        // Group not found
         return null;
     }
 
@@ -204,4 +191,20 @@ export const removePermissionsFromGroup = async (
     });
 
     return true;
+};
+
+/**
+ * Get all permissions
+ * @param prisma
+ * @returns
+ */
+export const getAllPermissions = async (prisma: PrismaClient) => {
+    const permissions = await prisma.permission.findMany({
+        select: {
+            id: true,
+            name: true
+        }
+    });
+
+    return permissions;
 };

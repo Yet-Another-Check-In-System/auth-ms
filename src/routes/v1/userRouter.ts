@@ -1,6 +1,6 @@
 import { Router } from 'express';
-
 import { body, param } from 'express-validator';
+
 import * as controller from '../../controllers/userController';
 import validateRequest from '../../middlewares/validateRequest';
 
