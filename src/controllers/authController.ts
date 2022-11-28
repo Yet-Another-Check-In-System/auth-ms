@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 import { DateTime } from 'luxon';
 
 import { SignupLocalUser } from '../interfaces/IAuth';
-import * as authService from '../services/authService';
+import * as service from '../services/authService';
 import logger from '../utils/logger';
 import prisma from '../utils/prismaHandler';
 import * as responses from '../utils/responses';
@@ -60,7 +60,7 @@ export const signUpLocalUser = async (
         const body: SignupLocalUser = req.body;
 
         // Try to create user
-        const user = await authService.signupLocal(body, prisma);
+        const user = await service.signupLocal(body, prisma);
 
         if (!user) {
             return responses.badRequest(

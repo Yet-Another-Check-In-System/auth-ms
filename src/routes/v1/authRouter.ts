@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { body } from 'express-validator';
 
-import * as userController from '../../controllers/authController';
+import * as controller from '../../controllers/authController';
 import loginLocal from '../../middlewares/localLogin';
 import validateRequest from '../../middlewares/validateRequest';
 import * as responses from '../../utils/responses';
@@ -17,7 +17,7 @@ router.post(
     body('password').isLength({ min: 8 }),
     validateRequest(),
     loginLocal(),
-    userController.logIn
+    controller.logIn
 );
 
 /**
@@ -47,5 +47,5 @@ router.post(
     body('country').not().isEmpty().trim().escape().isISO31661Alpha2(),
     body('company').not().isEmpty().trim().escape(),
     validateRequest(),
-    userController.signUpLocalUser
+    controller.signUpLocalUser
 );
