@@ -592,9 +592,6 @@ paths:
                                     id:
                                         type: string
                                         format: uuid
-                                    email:
-                                        type: string
-                                        format: email
                                     permissions:
                                         type: array
                                         items:
@@ -627,8 +624,6 @@ paths:
                                     id:
                                         type: string
                                         format: uuid
-                                    name:
-                                        type: string
                                     permissions:
                                         type: array
                                         items:
@@ -667,8 +662,6 @@ paths:
                                     id:
                                         type: string
                                         format: uuid
-                                    name:
-                                        type: string
                                     permissions:
                                         type: array
                                         items:
@@ -707,8 +700,6 @@ paths:
                                     id:
                                         type: string
                                         format: uuid
-                                    name:
-                                        type: string
                                     permissions:
                                         type: array
                                         items:
