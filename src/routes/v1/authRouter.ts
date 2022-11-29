@@ -45,7 +45,12 @@ router.post(
     body('firstName').not().isEmpty().trim().escape(),
     body('lastName').not().isEmpty().trim().escape(),
     body('country').not().isEmpty().trim().escape().isISO31661Alpha2(),
-    body('company').not().isEmpty().trim().escape(),
+    body('company')
+        .optional({ nullable: true })
+        .not()
+        .isEmpty()
+        .trim()
+        .escape(),
     validateRequest(),
     controller.signUpLocalUser
 );
