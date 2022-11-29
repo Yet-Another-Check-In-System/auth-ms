@@ -2,6 +2,24 @@ import { PrismaClient } from '@prisma/client';
 import _ from 'lodash';
 
 /**
+ * Get all permissions
+ * @param prisma
+ * @returns
+ */
+export const getAllPermissions = async (
+    prisma: PrismaClient
+): Promise<{ id: string; name: string }[]> => {
+    const permissions = await prisma.permission.findMany({
+        select: {
+            id: true,
+            name: true
+        }
+    });
+
+    return permissions;
+};
+
+/**
  * Get permissions of a single user
  * e.g. all permissions gained from groups
  * @param userId
@@ -11,7 +29,7 @@ import _ from 'lodash';
 export const getUserPermission = async (
     userId: string,
     prisma: PrismaClient
-) => {
+): Promise<string[] | null> => {
     const user = await prisma.user.findFirst({
         select: {
             id: true
@@ -51,8 +69,8 @@ export const getUserPermission = async (
     });
 
     // Combine permissions and return them
-    const permissionArray = _.map(permissions, (p) => p.permission);
-    const uniquePermissions = _.uniqBy(permissionArray, (x) => x.name);
+    const permissionArray = _.map(permissions, (p) => p.permission.name);
+    const uniquePermissions = _.uniqBy(permissionArray, (p) => p);
 
     return uniquePermissions;
 };
@@ -66,7 +84,7 @@ export const getUserPermission = async (
 export const getGroupPermission = async (
     groupId: string,
     prisma: PrismaClient
-) => {
+): Promise<string[] | null> => {
     const group = await prisma.group.findFirst({
         select: {
             id: true
@@ -91,7 +109,7 @@ export const getGroupPermission = async (
         }
     });
 
-    const permissions = _.map(permissionObjectArray, (x) => x.permission);
+    const permissions = _.map(permissionObjectArray, (x) => x.permission.name);
 
     // Return them
     return permissions;
@@ -110,7 +128,11 @@ export const addPermissionsToGroup = async (
     permissions: string[],
     callerId: string,
     prisma: PrismaClient
-) => {
+): Promise<true | null> => {
+    if (permissions.length === 0) {
+        return true;
+    }
+
     const group = await prisma.group.findFirst({
         select: {
             id: true
@@ -166,7 +188,11 @@ export const removePermissionsFromGroup = async (
     groupId: string,
     permissions: string[],
     prisma: PrismaClient
-) => {
+): Promise<true | null> => {
+    if (permissions.length === 0) {
+        return true;
+    }
+
     const group = await prisma.group.findFirst({
         select: {
             id: true
@@ -191,20 +217,4 @@ export const removePermissionsFromGroup = async (
     });
 
     return true;
-};
-
-/**
- * Get all permissions
- * @param prisma
- * @returns
- */
-export const getAllPermissions = async (prisma: PrismaClient) => {
-    const permissions = await prisma.permission.findMany({
-        select: {
-            id: true,
-            name: true
-        }
-    });
-
-    return permissions;
 };

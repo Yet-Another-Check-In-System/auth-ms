@@ -1,4 +1,3 @@
-import { Permission } from '@prisma/client';
 import { NextFunction, Request, Response } from 'express';
 
 import * as service from '../services/permissionService';
@@ -79,7 +78,7 @@ export const addPermissionsToGroup = async (
         const groupPermissions = (await service.getGroupPermission(
             groupId,
             prisma
-        )) as Permission[];
+        )) as string[];
 
         return responses.ok(req, res, {
             id: groupId,
@@ -113,7 +112,7 @@ export const removePermissionsFromGroup = async (
         const groupPermissions = (await service.getGroupPermission(
             groupId,
             prisma
-        )) as Permission[];
+        )) as string[];
 
         return responses.ok(req, res, {
             id: groupId,
