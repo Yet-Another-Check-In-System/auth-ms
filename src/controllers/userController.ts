@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import logger from '../utils/logger';
 
-import * as userService from '../services/userService';
+import * as service from '../services/userService';
 import * as IUser from '../interfaces/IUser';
 import * as responses from '../utils/responses';
 import prisma from '../utils/prismaHandler';
@@ -12,7 +12,7 @@ export const getAllUsers = async (
     next: NextFunction
 ) => {
     try {
-        const users = await userService.getAllUsers(prisma);
+        const users = await service.getAllUsers(prisma);
 
         return responses.ok(req, res, { users: users });
     } catch (err: unknown) {
@@ -27,8 +27,8 @@ export const getSingleUser = async (
     next: NextFunction
 ) => {
     try {
-        const userId = req.query.userId as string;
-        const user = await userService.getSingleUser(userId, prisma);
+        const userId = req.params.userId as string;
+        const user = await service.getSingleUser(userId, prisma);
 
         if (!user) {
             // User not found
@@ -48,10 +48,10 @@ export const updateSingleUser = async (
     next: NextFunction
 ) => {
     try {
-        const userId = req.query.userId as string;
+        const userId = req.params.userId as string;
         const body = req.body as IUser.PatchSingleUser;
 
-        const updatedUser = await userService.updateSingleUser(
+        const updatedUser = await service.updateSingleUser(
             userId,
             body,
             prisma
@@ -75,8 +75,8 @@ export const deleteSingleUser = async (
     next: NextFunction
 ) => {
     try {
-        const userId = req.query.userId as string;
-        const result = await userService.deleteSingleUser(userId, prisma);
+        const userId = req.params.userId as string;
+        const result = await service.deleteSingleUser(userId, prisma);
 
         if (!result) {
             // User not found

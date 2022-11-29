@@ -10,8 +10,12 @@ const validateRequest = () => {
         next: NextFunction
     ) => {
         try {
-            if (!validationResult(req).isEmpty()) {
-                logger.warn('Request contained invalid values');
+            const result = validationResult(req);
+
+            if (!result.isEmpty()) {
+                logger.debug(
+                    `Invalid values: ${JSON.stringify(result.array())}`
+                );
                 return responses.badRequest(req, res);
             }
 

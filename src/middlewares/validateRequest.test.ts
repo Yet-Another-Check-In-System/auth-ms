@@ -21,7 +21,8 @@ describe('validateRequest', () => {
 
     it('Should return Bad Request if there are validation errors', async () => {
         const result: Partial<Result> = {
-            isEmpty: jest.fn().mockReturnValue(false)
+            isEmpty: jest.fn().mockReturnValue(false),
+            array: jest.fn()
         };
         mockedValidationResult.mockReturnValueOnce(result as Result);
 

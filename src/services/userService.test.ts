@@ -3,7 +3,13 @@ import * as userService from './userService';
 import { prismaMock } from '../utils/prismaMock';
 import { User } from '@prisma/client';
 
+jest.mock('../utils/logger');
+
 describe('userService', () => {
+    beforeEach(() => {
+        jest.resetAllMocks();
+    });
+
     describe('getAllUsers', () => {
         it('Should return all users found', async () => {
             const users = [

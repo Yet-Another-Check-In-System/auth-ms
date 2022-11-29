@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import { body, query } from 'express-validator';
+import { body, param } from 'express-validator';
 
-import * as groupController from '../../controllers/groupController';
+import * as controller from '../../controllers/groupController';
 import validateRequest from '../../middlewares/validateRequest';
 
 export const router = Router();
@@ -9,7 +9,7 @@ export const router = Router();
 /**
  * Get all user groups
  */
-router.get('/', groupController.getGroups);
+router.get('/', controller.getGroups);
 
 /**
  * Create a new user group
@@ -18,7 +18,7 @@ router.post(
     '/',
     body('name').not().isEmpty().trim().escape(),
     validateRequest(),
-    groupController.createGroup
+    controller.createGroup
 );
 
 /**
@@ -26,9 +26,9 @@ router.post(
  */
 router.get(
     '/:groupId',
-    query('groupId').not().isEmpty().isUUID().trim().escape(),
+    param('groupId').not().isEmpty().isUUID().trim().escape(),
     validateRequest(),
-    groupController.getGroup
+    controller.getGroup
 );
 
 /**
@@ -36,10 +36,10 @@ router.get(
  */
 router.patch(
     '/:groupId',
-    query('groupId').not().isEmpty().isUUID().trim().escape(),
+    param('groupId').not().isEmpty().isUUID().trim().escape(),
     body('name').not().isEmpty().trim().escape(),
     validateRequest(),
-    groupController.updateGroup
+    controller.updateGroup
 );
 
 /**
@@ -47,9 +47,9 @@ router.patch(
  */
 router.delete(
     '/:groupId',
-    query('groupId').not().isEmpty().isUUID().trim().escape(),
+    param('groupId').not().isEmpty().isUUID().trim().escape(),
     validateRequest(),
-    groupController.deleteGroup
+    controller.deleteGroup
 );
 
 /**
@@ -57,11 +57,11 @@ router.delete(
  */
 router.patch(
     '/:groupId/users',
-    query('groupId').not().isEmpty().isUUID().trim().escape(),
+    param('groupId').not().isEmpty().isUUID().trim().escape(),
     body().isArray(),
     body('*').isUUID(),
     validateRequest(),
-    groupController.addUsersToGroup
+    controller.addUsersToGroup
 );
 
 /**
@@ -69,8 +69,8 @@ router.patch(
  */
 router.delete(
     '/:groupId/users/:userId',
-    query('groupId').not().isEmpty().isUUID().trim().escape(),
-    query('userId').not().isEmpty().isUUID().trim().escape(),
+    param('groupId').not().isEmpty().isUUID().trim().escape(),
+    param('userId').not().isEmpty().isUUID().trim().escape(),
     validateRequest(),
-    groupController.removeUserFromGroup
+    controller.removeUserFromGroup
 );

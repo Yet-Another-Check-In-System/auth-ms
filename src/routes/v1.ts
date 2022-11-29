@@ -10,8 +10,8 @@ const router = Router();
 
 router.use('/health', healthRouter);
 router.use('/auth', authRouter);
-router.use('/permission', permissionRouter);
-router.use('/group', groupRouter);
-router.use('/user', userRouter);
+router.use('/permissions', permissionRouter);
+router.use('/groups', groupRouter);
+router.use('/users', userRouter);
 
 export default router;

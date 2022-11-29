@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 
-import * as groupService from '../services/groupService';
+import * as service from '../services/groupService';
 import logger from '../utils/logger';
 import prisma from '../utils/prismaHandler';
 import * as responses from '../utils/responses';
@@ -12,7 +12,7 @@ export const createGroup = async (
 ) => {
     try {
         const name = req.body.name as string;
-        const createdGroup = await groupService.createGroup(name, prisma);
+        const createdGroup = await service.createGroup(name, prisma);
 
         return responses.created(req, res, createdGroup);
     } catch (err: unknown) {
@@ -27,8 +27,8 @@ export const getGroup = async (
     next: NextFunction
 ) => {
     try {
-        const groupId = req.query.groupId as string;
-        const foundGroup = await groupService.getGroup(groupId, prisma);
+        const groupId = req.params.groupId as string;
+        const foundGroup = await service.getGroup(groupId, prisma);
 
         if (!foundGroup) {
             return responses.notFound(req, res);
@@ -47,7 +47,7 @@ export const getGroups = async (
     next: NextFunction
 ) => {
     try {
-        const foundGroups = await groupService.getGroups(prisma);
+        const foundGroups = await service.getGroups(prisma);
 
         const response = {
             groups: foundGroups
@@ -66,13 +66,9 @@ export const updateGroup = async (
     next: NextFunction
 ) => {
     try {
-        const groupId = req.query.groupId as string;
+        const groupId = req.params.groupId as string;
         const name = req.body.name as string;
-        const updatedGroup = await groupService.updateGroup(
-            groupId,
-            name,
-            prisma
-        );
+        const updatedGroup = await service.updateGroup(groupId, name, prisma);
 
         if (!updatedGroup) {
             return responses.notFound(req, res);
@@ -91,11 +87,8 @@ export const deleteGroup = async (
     next: NextFunction
 ) => {
     try {
-        const groupId = req.query.groupId as string;
-        const operationSuccessful = await groupService.deleteGroup(
-            groupId,
-            prisma
-        );
+        const groupId = req.params.groupId as string;
+        const operationSuccessful = await service.deleteGroup(groupId, prisma);
 
         if (operationSuccessful === null) {
             return responses.notFound(req, res);
@@ -119,13 +112,9 @@ export const addUsersToGroup = async (
     next: NextFunction
 ) => {
     try {
-        const groupId = req.query.groupId as string;
+        const groupId = req.params.groupId as string;
         const users = req.body as string[];
-        const result = await groupService.addUsersToGroup(
-            groupId,
-            users,
-            prisma
-        );
+        const result = await service.addUsersToGroup(groupId, users, prisma);
 
         if (result === null) {
             return responses.notFound(req, res);
@@ -149,9 +138,9 @@ export const removeUserFromGroup = async (
     next: NextFunction
 ) => {
     try {
-        const groupId = req.query.groupId as string;
-        const userId = req.query.userId as string;
-        const operationSuccessful = await groupService.removeUserFromGroup(
+        const groupId = req.params.groupId as string;
+        const userId = req.params.userId as string;
+        const operationSuccessful = await service.removeUserFromGroup(
             groupId,
             userId,
             prisma
