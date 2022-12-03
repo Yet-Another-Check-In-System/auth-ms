@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { body, param } from 'express-validator';
 
 import * as controller from '../../controllers/groupController';
+import { authorize } from '../../middlewares/authentication';
 import validateRequest from '../../middlewares/validateRequest';
 
 export const router = Router();
@@ -9,7 +10,7 @@ export const router = Router();
 /**
  * Get all user groups
  */
-router.get('/', controller.getGroups);
+router.get('/', authorize('admin.groups.read'), controller.getGroups);
 
 /**
  * Create a new user group
@@ -18,6 +19,7 @@ router.post(
     '/',
     body('name').not().isEmpty().trim().escape(),
     validateRequest(),
+    authorize('admin.groups.write'),
     controller.createGroup
 );
 
@@ -28,6 +30,7 @@ router.get(
     '/:groupId',
     param('groupId').not().isEmpty().isUUID().trim().escape(),
     validateRequest(),
+    authorize('admin.groups.read'),
     controller.getGroup
 );
 
@@ -39,6 +42,7 @@ router.patch(
     param('groupId').not().isEmpty().isUUID().trim().escape(),
     body('name').not().isEmpty().trim().escape(),
     validateRequest(),
+    authorize('admin.groups.write'),
     controller.updateGroup
 );
 
@@ -49,6 +53,7 @@ router.delete(
     '/:groupId',
     param('groupId').not().isEmpty().isUUID().trim().escape(),
     validateRequest(),
+    authorize('admin.groups.delete'),
     controller.deleteGroup
 );
 
@@ -61,6 +66,7 @@ router.patch(
     body().isArray(),
     body('*').isUUID(),
     validateRequest(),
+    authorize('admin.groups.users.write'),
     controller.addUsersToGroup
 );
 
@@ -72,5 +78,6 @@ router.delete(
     param('groupId').not().isEmpty().isUUID().trim().escape(),
     param('userId').not().isEmpty().isUUID().trim().escape(),
     validateRequest(),
+    authorize('admin.groups.users.delete'),
     controller.removeUserFromGroup
 );

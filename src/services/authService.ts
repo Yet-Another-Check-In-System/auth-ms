@@ -1,9 +1,12 @@
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 import { DateTime } from 'luxon';
+import minimatch from 'minimatch';
+import _ from 'lodash';
 
 import { ExportedUser, SignupLocalUser } from '../interfaces/IAuth';
 import logger from '../utils/logger';
+import * as permissionService from './permissionService';
 
 export const verifyLocalLogin = async (
     email: string,
@@ -102,4 +105,36 @@ export const signupLocal = async (
     };
 
     return exportedUser;
+};
+
+export const authorize = async (
+    userId: string,
+    requiredPermission: string,
+    prisma: PrismaClient
+): Promise<[boolean, string[]]> => {
+    const userPermissions = await permissionService.getUserPermission(
+        userId,
+        prisma
+    );
+    const matchedPermissions: string[] = [];
+
+    if (!userPermissions) {
+        return [false, matchedPermissions];
+    }
+
+    _.forEach(userPermissions, (p) => {
+        const matched = minimatch(p, requiredPermission);
+
+        if (matched) {
+            matchedPermissions.push(p);
+        }
+    });
+
+    console.log(matchedPermissions);
+
+    if (matchedPermissions.length === 0) {
+        return [false, matchedPermissions];
+    }
+
+    return [true, matchedPermissions];
 };
