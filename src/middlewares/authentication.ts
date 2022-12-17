@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import _ from 'lodash';
 
-import { ExportedUser, TokenPayload } from '../interfaces/IAuth';
+import { TokenPayload } from '../interfaces/IAuth';
 import * as authService from '../services/authService';
 import logger from '../utils/logger';
 import prisma from '../utils/prismaHandler';
@@ -71,13 +71,11 @@ export const authorize = (requiredPermission: string) => {
     ) => {
         try {
             const user = req.TokenPayload;
-            console.log('User', user);
 
             if (!user || !user.sub) {
-                logger.error(
+                throw new Error(
                     'Request.User not set correctly! Was authenticate called before this function?'
                 );
-                return responses.internalServerError(req, res);
             }
 
             const [isAllowed] = await authService.authorize(
@@ -117,10 +115,9 @@ export const authorizeSelf = (requiredPermission: string) => {
             const requestedId = req.params.userId;
 
             if (!user || !user.sub) {
-                logger.crit(
+                throw new Error(
                     'Request.User not set correctly! Was authenticate called before this function?'
                 );
-                return responses.internalServerError(req, res);
             }
 
             if (!requestedId) {

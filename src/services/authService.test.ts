@@ -1,9 +1,13 @@
 import bcrypt from 'bcryptjs';
 
 import { prismaMock } from '../utils/prismaMock';
-import { signupLocal, verifyLocalLogin } from './authService';
+import { signupLocal, verifyLocalLogin, authorize } from './authService';
+import { getUserPermission } from './permissionService';
 
+jest.mock('./authService');
 jest.mock('../utils/logger');
+
+const mockedGetUserPermission = jest.mocked(getUserPermission);
 
 describe('authService', () => {
     beforeEach(() => {
@@ -190,5 +194,26 @@ describe('authService', () => {
                 company: 'TestCompany Oy'
             });
         });
+    });
+
+    describe('authorize', () => {
+        /*
+        it('Should return false and [] when fetching permissions fails', async () => {
+            mockedGetUserPermission.mockResolvedValueOnce(null);
+
+            const [allowed, matchedPermissions] = await authorize(
+                'a304c861-959f-47b8-9b78-e313d0cc5b98',
+                '*.test.permission',
+                prismaMock
+            );
+
+            expect(allowed).toEqual(false);
+            expect(matchedPermissions).toEqual([]);
+        });
+        */
+
+        it.todo('Should return false and [] when no matchin permissions found');
+
+        it.todo('Should return true and matched permission when successful');
     });
 });

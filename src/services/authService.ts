@@ -130,8 +130,6 @@ export const authorize = async (
         }
     });
 
-    console.log(matchedPermissions);
-
     if (matchedPermissions.length === 0) {
         return [false, matchedPermissions];
     }
