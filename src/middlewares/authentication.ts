@@ -112,7 +112,6 @@ export const authorizeSelf = (requiredPermission: string) => {
     ) => {
         try {
             const user = req.TokenPayload;
-            const requestedId = req.params.userId;
 
             if (!user || !user.sub) {
                 throw new Error(
@@ -120,9 +119,11 @@ export const authorizeSelf = (requiredPermission: string) => {
                 );
             }
 
-            if (!requestedId) {
+            if (!req.params.userId) {
                 return responses.badRequest(req, res);
             }
+
+            const requestedId = req.params.userId;
 
             const [isAllowed, matchedPermissions] = await authService.authorize(
                 user.sub,
