@@ -49,10 +49,6 @@ VALUES
 INSERT INTO
     public."Permission"
 VALUES
-    ('9d068aca-9d00-4c13-9e11-8bacf55c7015', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin.groups.users.read');
-INSERT INTO
-    public."Permission"
-VALUES
     ('4828fcce-a1ec-4899-9b82-bcbf69fe1593', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin.users.write');
 INSERT INTO
     public."Permission"
@@ -70,6 +66,11 @@ INSERT INTO
     public."Permission"
 VALUES
     ('53ed9be0-db68-4c15-8fa5-25efd8ac1f7b', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin.permissions.write');
+INSERT INTO
+    public."Permission"
+VALUES
+    ('0c60899d-9d50-4b14-8223-d5c3b9d6fea1', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin.permissions.delete');
+
 
 INSERT INTO
     public."Group"
@@ -99,10 +100,6 @@ VALUES
 INSERT INTO
     public."GroupPermissions"
 VALUES
-    ('b21aaacf-6833-401d-9757-96e3675f2ff6', '9d068aca-9d00-4c13-9e11-8bacf55c7015', CURRENT_TIMESTAMP, null);
-INSERT INTO
-    public."GroupPermissions"
-VALUES
     ('b21aaacf-6833-401d-9757-96e3675f2ff6', '4828fcce-a1ec-4899-9b82-bcbf69fe1593', CURRENT_TIMESTAMP, null);
 INSERT INTO
     public."GroupPermissions"
@@ -120,6 +117,10 @@ INSERT INTO
     public."GroupPermissions"
 VALUES
     ('b21aaacf-6833-401d-9757-96e3675f2ff6', '53ed9be0-db68-4c15-8fa5-25efd8ac1f7b', CURRENT_TIMESTAMP, null);
+INSERT INTO
+    public."GroupPermissions"
+VALUES
+    ('b21aaacf-6833-401d-9757-96e3675f2ff6', '0c60899d-9d50-4b14-8223-d5c3b9d6fea1', CURRENT_TIMESTAMP, null);
 
 END TRANSACTION;
 

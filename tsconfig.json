@@ -1,12 +1,13 @@
 {
     "compilerOptions": {
-        "target": "es6",
+        "target": "ES6",
         "module": "commonjs",
         "rootDir": "./src",
         "outDir": "./build",
         "esModuleInterop": true,
         "strict": true,
-        "resolveJsonModule": true
+        "resolveJsonModule": true,
+        "sourceMap": true
     },
     "include": ["./src/**/*.ts"],
     "files": ["./src/types/express/index.d.ts"]

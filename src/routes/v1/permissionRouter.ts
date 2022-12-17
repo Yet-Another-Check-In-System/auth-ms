@@ -5,6 +5,7 @@ import { Router } from 'express';
 import { body, param } from 'express-validator';
 
 import * as controller from '../../controllers/permissionController';
+import { authorize, authorizeSelf } from '../../middlewares/authentication';
 import validateRequest from '../../middlewares/validateRequest';
 
 export const router = Router();
@@ -13,7 +14,11 @@ export const router = Router();
  * Get all available permissions
  * Requires admin authentication
  */
-router.get('/', controller.getAllPermissions);
+router.get(
+    '/',
+    authorize('admin.permissions.read'),
+    controller.getAllPermissions
+);
 
 /**
  * Get all permissions for user
@@ -23,6 +28,7 @@ router.get(
     '/users/:userId',
     param('userId').not().isEmpty().isUUID().trim().escape(),
     validateRequest(),
+    authorizeSelf('*.permissions.read'),
     controller.getUserPermission
 );
 
@@ -34,6 +40,7 @@ router.get(
     '/groups/:groupId',
     param('groupId').not().isEmpty().isUUID().trim().escape(),
     validateRequest(),
+    authorize('admin.permissions.read'),
     controller.getGroupPermission
 );
 
@@ -47,6 +54,7 @@ router.patch(
     body().isArray(),
     body('*').isString().isUUID().trim().escape(),
     validateRequest(),
+    authorize('admin.permissions.write'),
     controller.addPermissionsToGroup
 );
 
@@ -58,5 +66,6 @@ router.delete(
     '/groups/:groupId',
     param('groupId').not().isEmpty().isUUID().trim().escape(),
     validateRequest(),
+    authorize('admin.permissions.delete'),
     controller.removePermissionsFromGroup
 );

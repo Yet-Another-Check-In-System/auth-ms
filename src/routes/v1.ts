@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { authenticate } from '../middlewares/authentication';
 
 import { router as authRouter } from './v1/authRouter';
 import { router as groupRouter } from './v1/groupRouter';
@@ -10,8 +11,8 @@ const router = Router();
 
 router.use('/health', healthRouter);
 router.use('/auth', authRouter);
-router.use('/permissions', permissionRouter);
-router.use('/groups', groupRouter);
-router.use('/users', userRouter);
+router.use('/permissions', authenticate(), permissionRouter);
+router.use('/groups', authenticate(), groupRouter);
+router.use('/users', authenticate(), userRouter);
 
 export default router;

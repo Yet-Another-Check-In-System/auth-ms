@@ -1,9 +1,13 @@
 import bcrypt from 'bcryptjs';
 
 import { prismaMock } from '../utils/prismaMock';
-import { signupLocal, verifyLocalLogin } from './authService';
+import { signupLocal, verifyLocalLogin, authorize } from './authService';
+import * as permissionService from './permissionService';
 
 jest.mock('../utils/logger');
+jest.mock('./permissionService');
+
+const mockedPermissionService = jest.mocked(permissionService);
 
 describe('authService', () => {
     beforeEach(() => {
@@ -189,6 +193,53 @@ describe('authService', () => {
                 country: 'Finland',
                 company: 'TestCompany Oy'
             });
+        });
+    });
+
+    describe('authorize', () => {
+        it('Should return false and [] when fetching permissions fails', async () => {
+            mockedPermissionService.getUserPermission.mockResolvedValueOnce(
+                null
+            );
+
+            const [allowed, matchedPermissions] = await authorize(
+                'a304c861-959f-47b8-9b78-e313d0cc5b98',
+                '*.test.permission',
+                prismaMock
+            );
+
+            expect(allowed).toEqual(false);
+            expect(matchedPermissions).toEqual([]);
+        });
+
+        it('Should return false and [] when no matching permissions found', async () => {
+            mockedPermissionService.getUserPermission.mockResolvedValueOnce([
+                'basic.test.permission2'
+            ]);
+
+            const [allowed, matchedPermissions] = await authorize(
+                'a304c861-959f-47b8-9b78-e313d0cc5b98',
+                '*.test.permission',
+                prismaMock
+            );
+
+            expect(allowed).toEqual(false);
+            expect(matchedPermissions).toEqual([]);
+        });
+
+        it('Should return true and matched permission when successful', async () => {
+            mockedPermissionService.getUserPermission.mockResolvedValueOnce([
+                'basic.test.permission'
+            ]);
+
+            const [allowed, matchedPermissions] = await authorize(
+                'a304c861-959f-47b8-9b78-e313d0cc5b98',
+                '*.test.permission',
+                prismaMock
+            );
+
+            expect(allowed).toEqual(true);
+            expect(matchedPermissions).toEqual(['basic.test.permission']);
         });
     });
 });
