@@ -60,10 +60,20 @@ export const authenticate = () => {
 
 /**
  * Authorize user to access a resource
- * @param requiredPermission Require this permission to access resource, can have wildcards ('*')
+ *
+ * If the parameters contain "userId", the subject field of
+ * the token needs to match the "userId" parameter if the caller
+ * doesn't have admin privileges for the operation.
+ *
+ * @param requiredPermission Require this permission to access resource,
+ * can have wildcards e.g. "*.permissions.read"
+ * @param skipUserIdCheck When true skips the userId checks
  * @returns
  */
-export const authorize = (requiredPermission: string) => {
+export const authorize = (
+    requiredPermission: string,
+    skipUserIdCheck = false
+) => {
     const middleware = async (
         req: Request,
         res: Response,
@@ -78,74 +88,31 @@ export const authorize = (requiredPermission: string) => {
                 );
             }
 
-            const [isAllowed] = await authService.authorize(
+            const matchedPermissions = await authService.authorize(
                 user.sub,
                 requiredPermission,
                 prisma
             );
 
-            if (!isAllowed) {
+            if (matchedPermissions.length === 0) {
                 return responses.forbidden(req, res);
             }
 
-            next();
-        } catch (err: unknown) {
-            logger.error(err);
-            next(err);
-        }
-    };
+            if (req.params.userId && !skipUserIdCheck) {
+                const requestedId = req.params.userId;
 
-    return middleware;
-};
-
-/**
- * Authorize user to access a resource
- * If basic user requires, requestedId to match
- * @param requiredPermission Require this permission to access resource, can have wildcards ('*')
- * @returns
- */
-export const authorizeSelf = (requiredPermission: string) => {
-    const middleware = async (
-        req: Request,
-        res: Response,
-        next: NextFunction
-    ) => {
-        try {
-            const user = req.TokenPayload;
-
-            if (!user || !user.sub) {
-                throw new Error(
-                    'Request.User not set correctly! Was authenticate called before this function?'
+                const matchedTypes = _.map(
+                    matchedPermissions,
+                    (m) => m.split('.')[0]
                 );
-            }
 
-            if (!req.params.userId) {
-                return responses.badRequest(req, res);
-            }
+                // Require admin rights for different userId
+                if (requestedId !== user.sub) {
+                    const isAdmin = matchedTypes.includes('admin');
 
-            const requestedId = req.params.userId;
-
-            const [isAllowed, matchedPermissions] = await authService.authorize(
-                user.sub,
-                requiredPermission,
-                prisma
-            );
-
-            if (!isAllowed) {
-                return responses.forbidden(req, res);
-            }
-
-            const matchedTypes = _.map(
-                matchedPermissions,
-                (m) => m.split('.')[0]
-            );
-
-            // Require admin rights for different userId
-            if (requestedId !== user.sub) {
-                const isAdmin = matchedTypes.includes('admin');
-
-                if (!isAdmin) {
-                    return responses.forbidden(req, res);
+                    if (!isAdmin) {
+                        return responses.forbidden(req, res);
+                    }
                 }
             }
 
